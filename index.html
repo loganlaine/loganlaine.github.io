@@ -3,32 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RE Underwriter</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>Real Estate Underwriting Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .input-block {
+            margin-bottom: 15px;
+        }
+
+        .input-block label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .input-block input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            color: #ffffff;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+
+        .results p {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+
+	footer {
+    	    text-align: center;
+    	    padding: 1rem;
+    	    position: relative;
+    	    bottom: 0;
+    	    width: 100%;
+	}
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to RE Underwriter</h1>
-        <p>Analyzing real estate for cash flow potential.</p>
-    </header>
+    <h1>Real Estate Underwriting Calculator</h1>
 
-    <main>
-        <section id="main-photo">
-            <img src="hero-image.jpg" alt="Main Photography" />
-        </section>
+    <div class="container">
+        <h2>Expenses</h2>
+        <div class="input-block">
+            <label for="purchase-price">Purchase Price:</label>
+            <input type="number" id="purchase-price" placeholder="Enter Purchase Price">
+        </div>
+        <div class="input-block">
+            <label for="down-payment">Down Payment (%):</label>
+            <input type="number" id="down-payment" placeholder="Enter Down Payment Percentage" value="20">
+        </div>
+        <div class="input-block">
+            <label for="operating-expenses">Operating Expenses (%):</label>
+            <input type="number" id="operating-expenses" placeholder="Enter Operating Expenses Percentage" value="40">
+        </div>
+        <div class="input-block">
+            <label for="closing-costs">Closing Costs (%):</label>
+            <input type="number" id="closing-costs" placeholder="Enter Closing Costs Percentage" value="5">
+        </div>
+        <div class="input-block">
+            <label for="interest-rate">Interest Rate (%):</label>
+            <input type="number" id="interest-rate" placeholder="Enter Interest Rate">
+        </div>
+        <div class="input-block">
+            <label for="loan-term">Loan Term (Years):</label>
+            <input type="number" id="loan-term" placeholder="Enter Loan Term">
+        </div>
+        <div class="input-block">
+            <label for="annual-tax">Annual Tax:</label>
+            <input type="number" id="annual-tax" placeholder="Enter Annual Tax">
+        </div>
+        <div class="input-block">
+            <label for="monthly-insurance">Monthly Insurance:</label>
+            <input type="number" id="monthly-insurance" placeholder="Enter Monthly Insurance">
+        </div>
+        <div class="input-block">
+            <label for="rehab-costs">Rehab/Repair Costs:</label>
+            <input type="number" id="rehab-costs" placeholder="Enter Rehab/Repair Costs">
+        </div>
 
-        <section id="explore">
-            <h2>Analyze Properties</h2>
-            <ul>
-                <li><a href="residential.html">Residential Properties</a></li>
-                <li><a href="commercial.html">Commercial Properties</a></li>
-                <li><a href="multifamily.html">Multifamily Properties</a></li>
-            </ul>
-        </section>
-    </main>
+        <h2>Income</h2>
+        <div class="input-block">
+            <label for="expected-rent">Monthly Rental Income:</label>
+            <input type="number" id="expected-rent" placeholder="Enter Expected Rental Income">
+        </div>
+        <div class="input-block">
+            <label for="other-income">Other Income:</label>
+            <input type="number" id="other-income" placeholder="Enter Other Income">
+        </div>
 
+        <h2>Other Metric Inputs</h2>
+        <div class="input-block">
+            <label for="cashflow-growth">Cash Flow Growth (%):</label>
+            <input type="number" id="cashflow-growth" placeholder="Enter Cash Flow Growth Percentage" value="2">
+        </div>
+
+        <button onclick="calculateMetrics()">Calculate</button>
+
+        <div class="results">
+    <h2>Results</h2>
+    <p id="total-investment">Total Investment Costs: </p>
+    <p id="monthly-noi">Monthly NOI: </p>
+    <p id="operating-expenses-display">Operating Expenses: </p>
+    <p id="expected-home-payment">Expected Monthly Payment: </p>
+    <p id="monthly-cash-flow">Monthly Cash Flow: </p>
+    <p id="debt-yield">Debt Yield: </p>
+    <p id="irr">IRR: </p>
+    <p id="coc">Cash-on-Cash Return: </p>
+    <p id="cap-rate">Cap Rate: </p>
+    <p id="dscr">DSCR: </p>
+</div>
+        </div>
+    </div>
+
+    <script>
+        function calculateIRR(cashFlows) {
+    let guessRate = 0.1;
+    const tolerance = 0.000001;
+    const maxIterations = 1000;
+
+    for (let iter = 0; iter < maxIterations; iter++) {
+        let npv = 0;
+        let derivative = 0;
+        for (let i = 0; i < cashFlows.length; i++) {
+            npv += cashFlows[i] / Math.pow(1 + guessRate, i);
+            derivative -= i * cashFlows[i] / Math.pow(1 + guessRate, i + 1);
+        }
+        if (Math.abs(npv) < tolerance) return (guessRate * 100).toFixed(2);
+        guessRate -= npv / derivative;
+    }
+    return "Calculation Error";
+}
+
+        function calculateMetrics() {
+    const purchasePrice = parseFloat(document.getElementById('purchase-price').value) || 0;
+    const downPaymentPercent = parseFloat(document.getElementById('down-payment').value) || 0;
+    const closingCostsPercent = parseFloat(document.getElementById('closing-costs').value) || 0;
+    const interestRate = parseFloat(document.getElementById('interest-rate').value) / 100 || 0;
+    const loanTerm = parseFloat(document.getElementById('loan-term').value) || 0;
+    const annualTax = parseFloat(document.getElementById('annual-tax').value) || 0;
+    const monthlyInsurance = parseFloat(document.getElementById('monthly-insurance').value) || 0;
+    const rehabCosts = parseFloat(document.getElementById('rehab-costs').value) || 0;
+    const expectedRent = parseFloat(document.getElementById('expected-rent').value) || 0;
+    const otherIncome = parseFloat(document.getElementById('other-income').value) || 0;
+    const cashflowGrowth = parseFloat(document.getElementById('cashflow-growth').value) / 100 || 0.02;
+
+    const downPayment = (downPaymentPercent / 100) * purchasePrice;
+    const closingCosts = (closingCostsPercent / 100) * purchasePrice;
+    const totalInvestment = downPayment + closingCosts + rehabCosts;
+
+    const totalIncome = expectedRent + otherIncome;
+    const opexPercent = parseFloat(document.getElementById('operating-expenses').value) / 100 || 0;
+    const operatingExpenses = totalIncome * opexPercent;
+    const monthlyNOI = totalIncome - operatingExpenses;
+
+    const monthlyRate = interestRate / 12;
+    const numberOfPayments = loanTerm * 12;
+    const loanAmount = purchasePrice - downPayment;
+
+    const mortgagePayment = (loanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -numberOfPayments));
+    const expectedMonthlyPayment = mortgagePayment + (annualTax / 12) + monthlyInsurance;
+    const monthlyCashFlow = monthlyNOI - expectedMonthlyPayment;
+
+    const annualNOI = monthlyNOI * 12;
+    const annualDebtService = expectedMonthlyPayment * 12;
+    const debtYield = (annualNOI / loanAmount) * 100;
+    const dscr = annualNOI / annualDebtService;
+    const coc = (monthlyCashFlow * 12 / totalInvestment) * 100;
+    const capRate = (annualNOI / purchasePrice) * 100;
+
+    const cashFlows = [-totalInvestment];
+    for (let i = 1; i <= loanTerm; i++) {
+        cashFlows.push(monthlyCashFlow * 12 * Math.pow(1 + cashflowGrowth, i - 1));
+    }
+
+    const irr = calculateIRR(cashFlows);
+
+    document.getElementById('total-investment').textContent = `Total Investment Costs: $${totalInvestment.toFixed(2)}`;
+    document.getElementById('monthly-noi').textContent = `Monthly NOI: $${monthlyNOI.toFixed(2)}`;
+    document.getElementById('operating-expenses-display').textContent = `Operating Expenses: $${operatingExpenses.toFixed(2)}`;
+    document.getElementById('expected-home-payment').textContent = `Expected Monthly Payment: $${expectedMonthlyPayment.toFixed(2)}`;
+    document.getElementById('monthly-cash-flow').textContent = `Monthly Cash Flow: $${monthlyCashFlow.toFixed(2)}`;
+    document.getElementById('debt-yield').textContent = `Debt Yield: ${debtYield.toFixed(2)}%`;
+    document.getElementById('irr').textContent = `IRR: ${irr}%`;
+    document.getElementById('coc').textContent = `Cash-on-Cash Return: ${coc.toFixed(2)}%`;
+    document.getElementById('cap-rate').textContent = `Cap Rate: ${capRate.toFixed(2)}%`;
+    document.getElementById('dscr').textContent = `DSCR: ${dscr.toFixed(2)}`;
+}
+    </script>
     <footer>
+	<p>Disclaimer: The calculations provided by this tool are estimates for informational purposes only and do not constitute financial advice. Users should consult with a qualified financial advisor or real estate professional before making any investment decisions. The creator of this calculator assumes no responsibility for the accuracy of the data or any decisions made based on these calculations.<p>
         <p>&copy; 2025 RE Underwriter. All rights reserved.</p>
     </footer>
 </body>
