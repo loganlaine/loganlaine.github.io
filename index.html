@@ -136,6 +136,16 @@
             <label for="cashflow-growth">Cash Flow Growth (%):</label>
             <input type="number" id="cashflow-growth" placeholder="Enter Cash Flow Growth Percentage" value="2">
         </div>
+	<h2>Exit Assumptions</h2>
+	<div class="input-block">
+    	    <label for="holding-period">Holding Period (Years):</label>
+    	    <input type="number" id="holding-period" placeholder="Enter Holding Period" value="5">
+	</div>
+	<div class="input-block">
+    	    <label for="exit-cap-rate">Exit Cap Rate (%):</label>
+    	    <input type="number" id="exit-cap-rate" placeholder="Enter Exit Cap Rate" value="7">
+	</div>
+
 
         <button onclick="calculateMetrics()">Calculate</button>
 
@@ -210,10 +220,21 @@
     const dscr = annualNOI / annualDebtService;
     const coc = (monthlyCashFlow * 12 / totalInvestment) * 100;
     const capRate = (annualNOI / purchasePrice) * 100;
+    const holdingPeriod = parseFloat(document.getElementById('holding-period').value) || 5;
+    const exitCapRate = parseFloat(document.getElementById('exit-cap-rate').value) / 100 || 0.07;
 
     const cashFlows = [-totalInvestment];
-    for (let i = 1; i <= loanTerm; i++) {
-        cashFlows.push(monthlyCashFlow * 12 * Math.pow(1 + cashflowGrowth, i - 1));
+    // Adjusted Cash Flows Calculation (based on holding period)
+    for (let i = 1; i <= holdingPeriod; i++) {
+        let adjustedCashFlow = monthlyCashFlow * 12 * Math.pow(1 + cashflowGrowth, i - 1);
+    
+        if (i === holdingPeriod) {
+            // Combine last year's cash flow with terminal value
+            const terminalValue = (monthlyNOI * 12 * Math.pow(1 + cashflowGrowth, holdingPeriod - 1)) / exitCapRate;
+            adjustedCashFlow += terminalValue;
+        }
+
+        cashFlows.push(adjustedCashFlow);
     }
 
     const irr = calculateIRR(cashFlows);
@@ -224,7 +245,7 @@
     document.getElementById('expected-home-payment').textContent = `Expected Monthly Payment: $${expectedMonthlyPayment.toFixed(2)}`;
     document.getElementById('monthly-cash-flow').textContent = `Monthly Cash Flow: $${monthlyCashFlow.toFixed(2)}`;
     document.getElementById('debt-yield').textContent = `Debt Yield: ${debtYield.toFixed(2)}%`;
-    document.getElementById('irr').textContent = `IRR: ${irr}%`;
+    document.getElementById('irr').textContent = `IRR (Based on ${holdingPeriod}-Year Holding Period): ${irr}%`;    
     document.getElementById('coc').textContent = `Cash-on-Cash Return: ${coc.toFixed(2)}%`;
     document.getElementById('cap-rate').textContent = `Cap Rate: ${capRate.toFixed(2)}%`;
     document.getElementById('dscr').textContent = `DSCR: ${dscr.toFixed(2)}`;
