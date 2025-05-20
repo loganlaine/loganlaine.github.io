@@ -4,80 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real Estate Underwriting Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 800px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin: auto;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .input-block {
-            margin-bottom: 15px;
-        }
-
-        .input-block label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .input-block input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            border: none;
-            color: #ffffff;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .results {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e9ecef;
-            border-radius: 5px;
-        }
-
-        .results p {
-            margin: 5px 0;
-            font-weight: bold;
-        }
-
-	footer {
-    	    text-align: center;
-    	    padding: 1rem;
-    	    position: relative;
-    	    bottom: 0;
-    	    width: 100%;
-	}
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h1>Real Estate Underwriting Calculator</h1>
@@ -86,27 +13,27 @@
         <h2>Expenses</h2>
         <div class="input-block">
             <label for="purchase-price">Purchase Price:</label>
-            <input type="number" id="purchase-price" placeholder="Enter Purchase Price">
+            <input type="number" id="purchase-price" placeholder="Enter Purchase Price Including Acquisition Costs">
         </div>
         <div class="input-block">
             <label for="down-payment">Down Payment (%):</label>
-            <input type="number" id="down-payment" placeholder="Enter Down Payment Percentage" value="20">
+            <input type="number" id="down-payment" placeholder="20% for conventional, 3.5% for FHA, 0% for VA loans" value="20">
         </div>
         <div class="input-block">
             <label for="operating-expenses">Operating Expenses (%):</label>
-            <input type="number" id="operating-expenses" placeholder="Enter Operating Expenses Percentage" value="40">
+            <input type="number" id="operating-expenses" placeholder="taxes, insurance, mngmnt fees, utilities, repairs. Typical range: 35-45% " value="40">
         </div>
         <div class="input-block">
             <label for="closing-costs">Closing Costs (%):</label>
-            <input type="number" id="closing-costs" placeholder="Enter Closing Costs Percentage" value="5">
+            <input type="number" id="closing-costs" placeholder="AVG: 3-6% of the purchase price. Include taxes, title fees, and lender fees." value="5">
         </div>
         <div class="input-block">
             <label for="interest-rate">Interest Rate (%):</label>
-            <input type="number" id="interest-rate" placeholder="Enter Interest Rate">
+            <input type="number" id="interest-rate" placeholder="Typical rates vary from 5-7%">
         </div>
         <div class="input-block">
             <label for="loan-term">Loan Term (Years):</label>
-            <input type="number" id="loan-term" placeholder="Enter Loan Term">
+            <input type="number" id="loan-term" placeholder="Enter Loan Term. Typically 15 or 30 years.">
         </div>
         <div class="input-block">
             <label for="annual-tax">Annual Tax:</label>
@@ -128,22 +55,22 @@
         </div>
         <div class="input-block">
             <label for="other-income">Other Income:</label>
-            <input type="number" id="other-income" placeholder="Enter Other Income">
+            <input type="number" id="other-income" placeholder="Parking fees, laundry, storage rental, etc.">
         </div>
 
         <h2>Other Metric Inputs</h2>
         <div class="input-block">
             <label for="cashflow-growth">Cash Flow Growth (%):</label>
-            <input type="number" id="cashflow-growth" placeholder="Enter Cash Flow Growth Percentage" value="2">
+            <input type="number" id="cashflow-growth" placeholder="2-3% is typical in stable markets." value="2">
         </div>
 	<h2>Exit Assumptions</h2>
 	<div class="input-block">
     	    <label for="holding-period">Holding Period (Years):</label>
-    	    <input type="number" id="holding-period" placeholder="Enter Holding Period" value="5">
+    	    <input type="number" id="holding-period" placeholder="Number of years you plan to hold the property before selling." value="5">
 	</div>
 	<div class="input-block">
     	    <label for="exit-cap-rate">Exit Cap Rate (%):</label>
-    	    <input type="number" id="exit-cap-rate" placeholder="Enter Exit Cap Rate" value="7">
+    	    <input type="number" id="exit-cap-rate" placeholder="Typical exit cap rates range from 6-9% " value="7">
 	</div>
 
 
