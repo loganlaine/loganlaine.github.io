@@ -1,189 +1,481 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real Estate Underwriting Calculator</title>
-    <link rel="stylesheet" href="https://loganlaine.github.io/styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RE Underwriter – Deal Analyzer (Static)</title>
+  <!-- Optional: your existing site stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Minimal reset + layout so it looks good even without styles.css */
+    body { margin:0; background:#f0f2f5; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:#111827; }
+    .page { max-width:1100px; margin:0 auto; padding:24px; }
+    .card { border:1px solid #e5e7eb; border-radius:12px; padding:16px; background:#fff; }
+    h1 { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .grid-4 { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:12px; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; }
+    .grid-main { display:grid; grid-template-columns:2fr 1fr; gap:12px; }
+    label { display:flex; flex-direction:column; gap:4px; font-size:12px; }
+    input[type="number"], select { padding:8px; border:1px solid #d1d5db; border-radius:8px; }
+    .row { display:flex; justify-content:space-between; gap:12px; }
+    .muted { font-size:12px; color:#6b7280; margin-bottom:8px; }
+    .btns { display:flex; gap:8px; }
+    .btn { padding:8px 12px; border-radius:10px; border:1px solid #d1d5db; background:#fff; color:#111827; cursor:pointer; }
+    .btn.active { background:#111827; color:#fff; }
+    .note { font-size:12px; color:#6b7280; margin-top:8px; }
+    .ok { color:#16a34a; font-weight:600; }
+    .warn { color:#a16207; font-weight:600; }
+    a.more { display:inline-block; margin-top:8px; font-size:13px; }
+  </style>
+  <!-- React 18 + Babel for in-browser JSX transpile (static hosting friendly) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
-    <h1>Real Estate Underwriting Calculator</h1>
+  <div id="root"></div>
 
-    <div class="container">
-        <h2>Expenses</h2>
-        <div class="input-block">
-            <label for="purchase-price">Purchase Price:</label>
-            <input type="number" id="purchase-price" placeholder="Enter Purchase Price Including Acquisition Costs">
-        </div>
-        <div class="input-block">
-            <label for="down-payment">Down Payment (%):</label>
-            <input type="number" id="down-payment" placeholder="20% for conventional, 3.5% for FHA, 0% for VA loans" value="20">
-        </div>
-        <div class="input-block">
-            <label for="operating-expenses">Operating Expenses (%):</label>
-            <input type="number" id="operating-expenses" placeholder="taxes, insurance, mngmnt fees, utilities, repairs. Typical range: 35-45% " value="40">
-        </div>
-        <div class="input-block">
-            <label for="closing-costs">Closing Costs (%):</label>
-            <input type="number" id="closing-costs" placeholder="AVG: 3-6% of the purchase price. Include taxes, title fees, and lender fees." value="5">
-        </div>
-        <div class="input-block">
-            <label for="interest-rate">Interest Rate (%):</label>
-            <input type="number" id="interest-rate" placeholder="Typical rates vary from 5-7%">
-        </div>
-        <div class="input-block">
-            <label for="loan-term">Loan Term (Years):</label>
-            <input type="number" id="loan-term" placeholder="Enter Loan Term. Typically 15 or 30 years.">
-        </div>
-        <div class="input-block">
-            <label for="annual-tax">Annual Tax:</label>
-            <input type="number" id="annual-tax" placeholder="Enter Annual Tax">
-        </div>
-        <div class="input-block">
-            <label for="monthly-insurance">Monthly Insurance:</label>
-            <input type="number" id="monthly-insurance" placeholder="Enter Monthly Insurance">
-        </div>
-        <div class="input-block">
-            <label for="rehab-costs">Rehab/Repair Costs:</label>
-            <input type="number" id="rehab-costs" placeholder="Enter Rehab/Repair Costs">
-        </div>
+  <script type="text/babel">
+    const { useMemo, useState } = React;
 
-        <h2>Income</h2>
-        <div class="input-block">
-            <label for="expected-rent">Monthly Rental Income:</label>
-            <input type="number" id="expected-rent" placeholder="Enter Expected Rental Income">
-        </div>
-        <div class="input-block">
-            <label for="other-income">Other Income:</label>
-            <input type="number" id="other-income" placeholder="Parking fees, laundry, storage rental, etc.">
-        </div>
-
-        <h2>Other Metric Inputs</h2>
-        <div class="input-block">
-            <label for="cashflow-growth">Cash Flow Growth (%):</label>
-            <input type="number" id="cashflow-growth" placeholder="2-3% is typical in stable markets." value="2">
-        </div>
-	<h2>Exit Assumptions</h2>
-	<div class="input-block">
-    	    <label for="holding-period">Holding Period (Years):</label>
-    	    <input type="number" id="holding-period" placeholder="Number of years you plan to hold the property before selling." value="5">
-	</div>
-	<div class="input-block">
-    	    <label for="exit-cap-rate">Exit Cap Rate (%):</label>
-    	    <input type="number" id="exit-cap-rate" placeholder="Typical exit cap rates range from 6-9% " value="7">
-	</div>
-
-
-        <button onclick="calculateMetrics()">Calculate</button>
-
-        <div class="results">
-    <h2>Results</h2>
-    <p id="total-investment">Total Investment Costs: </p>
-    <p id="monthly-noi">Monthly NOI: </p>
-    <p id="operating-expenses-display">Operating Expenses: </p>
-    <p id="expected-home-payment">Expected Monthly Payment: </p>
-    <p id="monthly-cash-flow">Monthly Cash Flow: </p>
-    <p id="debt-yield">Debt Yield: </p>
-    <p id="irr">IRR: </p>
-    <p id="coc">Cash-on-Cash Return: </p>
-    <p id="cap-rate">Cap Rate: </p>
-    <p id="dscr">DSCR: </p>
-</div>
-        </div>
-    </div>
-
-    <script>
-        function calculateIRR(cashFlows) {
-    let guessRate = 0.1;
-    const tolerance = 0.000001;
-    const maxIterations = 1000;
-
-    for (let iter = 0; iter < maxIterations; iter++) {
-        let npv = 0;
-        let derivative = 0;
-        for (let i = 0; i < cashFlows.length; i++) {
-            npv += cashFlows[i] / Math.pow(1 + guessRate, i);
-            derivative -= i * cashFlows[i] / Math.pow(1 + guessRate, i + 1);
-        }
-        if (Math.abs(npv) < tolerance) return (guessRate * 100).toFixed(2);
-        guessRate -= npv / derivative;
-    }
-    return "Calculation Error";
-}
-
-        function calculateMetrics() {
-    const purchasePrice = parseFloat(document.getElementById('purchase-price').value) || 0;
-    const downPaymentPercent = parseFloat(document.getElementById('down-payment').value) || 0;
-    const closingCostsPercent = parseFloat(document.getElementById('closing-costs').value) || 0;
-    const interestRate = parseFloat(document.getElementById('interest-rate').value) / 100 || 0;
-    const loanTerm = parseFloat(document.getElementById('loan-term').value) || 0;
-    const annualTax = parseFloat(document.getElementById('annual-tax').value) || 0;
-    const monthlyInsurance = parseFloat(document.getElementById('monthly-insurance').value) || 0;
-    const rehabCosts = parseFloat(document.getElementById('rehab-costs').value) || 0;
-    const expectedRent = parseFloat(document.getElementById('expected-rent').value) || 0;
-    const otherIncome = parseFloat(document.getElementById('other-income').value) || 0;
-    const cashflowGrowth = parseFloat(document.getElementById('cashflow-growth').value) / 100 || 0.02;
-
-    const downPayment = (downPaymentPercent / 100) * purchasePrice;
-    const closingCosts = (closingCostsPercent / 100) * purchasePrice;
-    const totalInvestment = downPayment + closingCosts + rehabCosts;
-
-    const totalIncome = expectedRent + otherIncome;
-    const opexPercent = parseFloat(document.getElementById('operating-expenses').value) / 100 || 0;
-    const operatingExpenses = totalIncome * opexPercent;
-    const monthlyNOI = totalIncome - operatingExpenses;
-
-    const monthlyRate = interestRate / 12;
-    const numberOfPayments = loanTerm * 12;
-    const loanAmount = purchasePrice - downPayment;
-
-    const mortgagePayment = (loanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -numberOfPayments));
-    const expectedMonthlyPayment = mortgagePayment + (annualTax / 12) + monthlyInsurance;
-    const monthlyCashFlow = monthlyNOI - expectedMonthlyPayment;
-
-    const annualNOI = monthlyNOI * 12;
-    const annualDebtService = expectedMonthlyPayment * 12;
-    const debtYield = (annualNOI / loanAmount) * 100;
-    const dscr = annualNOI / annualDebtService;
-    const coc = (monthlyCashFlow * 12 / totalInvestment) * 100;
-    const capRate = (annualNOI / purchasePrice) * 100;
-    const holdingPeriod = parseFloat(document.getElementById('holding-period').value) || 5;
-    const exitCapRate = parseFloat(document.getElementById('exit-cap-rate').value) / 100 || 0.07;
-
-    const cashFlows = [-totalInvestment];
-    // Adjusted Cash Flows Calculation (based on holding period)
-    for (let i = 1; i <= holdingPeriod; i++) {
-        let adjustedCashFlow = monthlyCashFlow * 12 * Math.pow(1 + cashflowGrowth, i - 1);
-    
-        if (i === holdingPeriod) {
-            // Combine last year's cash flow with terminal value
-            const terminalValue = (monthlyNOI * 12 * Math.pow(1 + cashflowGrowth, holdingPeriod - 1)) / exitCapRate;
-            adjustedCashFlow += terminalValue;
-        }
-
-        cashFlows.push(adjustedCashFlow);
+    // --------- Helper math ----------
+    const pmtsPerYear = 12;
+    function monthlyPI(loanAmt, annualRate, years) {
+      const r = annualRate / pmtsPerYear;
+      const n = years * pmtsPerYear;
+      if (annualRate === 0) return loanAmt / n;
+      return (loanAmt * r) / (1 - Math.pow(1 + r, -n));
     }
 
-    const irr = calculateIRR(cashFlows);
+    function amortizationFirstYearPrincipal(loanAmt, annualRate, years) {
+      // Sum of principal paid in first 12 payments
+      const r = annualRate / pmtsPerYear;
+      const m = monthlyPI(loanAmt, annualRate, years);
+      let balance = loanAmt;
+      let principalPaid = 0;
+      for (let i = 0; i < 12; i++) {
+        const interest = balance * r;
+        const principal = m - interest;
+        principalPaid += Math.max(0, principal);
+        balance -= principal;
+      }
+      return Math.max(0, principalPaid);
+    }
 
-    document.getElementById('total-investment').textContent = `Total Investment Costs: $${totalInvestment.toFixed(2)}`;
-    document.getElementById('monthly-noi').textContent = `Monthly NOI: $${monthlyNOI.toFixed(2)}`;
-    document.getElementById('operating-expenses-display').textContent = `Operating Expenses: $${operatingExpenses.toFixed(2)}`;
-    document.getElementById('expected-home-payment').textContent = `Expected Monthly Payment: $${expectedMonthlyPayment.toFixed(2)}`;
-    document.getElementById('monthly-cash-flow').textContent = `Monthly Cash Flow: $${monthlyCashFlow.toFixed(2)}`;
-    document.getElementById('debt-yield').textContent = `Debt Yield: ${debtYield.toFixed(2)}%`;
-    document.getElementById('irr').textContent = `IRR (Based on ${holdingPeriod}-Year Holding Period): ${irr}%`;    
-    document.getElementById('coc').textContent = `Cash-on-Cash Return: ${coc.toFixed(2)}%`;
-    document.getElementById('cap-rate').textContent = `Cap Rate: ${capRate.toFixed(2)}%`;
-    document.getElementById('dscr').textContent = `DSCR: ${dscr.toFixed(2)}`;
-}
+    function fmt(n, digits = 0) {
+      if (!isFinite(n)) return "-";
+      return n.toLocaleString(undefined, { maximumFractionDigits: digits, minimumFractionDigits: digits });
+    }
 
-    </script>
-    <footer>
-    <p><a href="moreinfo.html" target="_blank">Learn More About These Metrics</a></p>
+    function pct(n, digits = 2) {
+      if (!isFinite(n)) return "-";
+      return ((n * 100).toFixed(digits)) + "%";
+    }
 
-	<p>Disclaimer: The calculations provided by this tool are estimates for informational purposes only and do not constitute financial advice. Users should consult with a qualified financial advisor or real estate professional before making any investment decisions. The creator of this calculator assumes no responsibility for the accuracy of the data or any decisions made based on these calculations.<p>
-        <p>&copy; 2025 RE Underwriter. All rights reserved.</p>
-    </footer>
+    function Row({label, value}) {
+      return (
+        <div className="row">
+          <span>{label}</span>
+          <span style={{fontWeight:500}}>{value}</span>
+        </div>
+      );
+    }
+
+    function Section({title, children}) {
+      return (
+        <div className="card">
+          <div className="muted">{title}</div>
+          {children}
+        </div>
+      );
+    }
+
+    function Field({label, children}) {
+      return (
+        <label>
+          <span>{label}</span>
+          {children}
+        </label>
+      );
+    }
+
+    function InvestmentAnalyzer() {
+      // Core deal inputs
+      const [purchasePrice, setPurchasePrice] = useState(400000);
+      const [downPct, setDownPct] = useState(0.20);
+      const [rate, setRate] = useState(0.07); // 7.00%
+      const [termYears, setTermYears] = useState(30);
+      const [escrowTI, setEscrowTI] = useState(true); // user can choose non-escrow
+
+      // Loan type & mortgage insurance / funding fees
+      const [loanType, setLoanType] = useState('Conventional'); // 'Conventional' | 'FHA' | 'VA'
+      // Conventional PMI (only if down < 20%)
+      const [pmiAnnualPct, setPmiAnnualPct] = useState(0.006); // 0.6% typical midpoint
+      // FHA MIP
+      const [fhaUfmipPct, setFhaUfmipPct] = useState(0.0175); // 1.75% upfront
+      const [fhaAnnualMipPct, setFhaAnnualMipPct] = useState(0.0055); // 0.55% annual
+      const [fhaFinanceUfmip, setFhaFinanceUfmip] = useState(true);
+      // VA Funding Fee
+      const [vaFundingFeePct, setVaFundingFeePct] = useState(0.0215); // 2.15% default first-use with 0% down
+      const [vaFinanceFundingFee, setVaFinanceFundingFee] = useState(true);
+
+      // Taxes & insurance (annual)
+      const [taxRate, setTaxRate] = useState(0.012); // 1.2% of value per year
+      const [insAnnual, setInsAnnual] = useState(1400);
+
+      // Income & OpEx
+      const [monthlyRent, setMonthlyRent] = useState(4000); // total scheduled rent
+      const [opexSimplePct, setOpexSimplePct] = useState(0.40);
+      const [opexMode, setOpexMode] = useState('simple'); // 'simple' | 'itemized'
+
+      // Itemized OpEx (as % of rent unless marked fixed)
+      const [vacancyPct, setVacancyPct] = useState(0.05);
+      const [managementPct, setManagementPct] = useState(0.08);
+      const [repairsPct, setRepairsPct] = useState(0.05);
+      const [capexPct, setCapexPct] = useState(0.05);
+      const [utilitiesMonthly, setUtilitiesMonthly] = useState(0);
+      const [hoaMonthly, setHoaMonthly] = useState(0);
+      const [otherMonthly, setOtherMonthly] = useState(0);
+
+      // Closing costs & initial rehab (user-adjustable for negotiation)
+      const [closingCostPct, setClosingCostPct] = useState(0.02); // explicit field
+      const [initialRehab, setInitialRehab] = useState(0); // remodeling / make-ready paid out-of-pocket
+
+      // Assumptions for ROI/CAGR comparison
+      const [appreciationPct, setAppreciationPct] = useState(0.03); // annual home price growth
+      const [rentGrowthPct, setRentGrowthPct] = useState(0.02);
+      const [holdYears, setHoldYears] = useState(5);
+
+      // Index CAGR assumptions (editable by user; defaults are common long-run ballparks)
+      const [sp500CAGR, setSp500CAGR] = useState(0.10);
+      const [djiaCAGR, setDjiaCAGR] = useState(0.07);
+      const [nasdaqCAGR, setNasdaqCAGR] = useState(0.12);
+
+      // ---------- Derived numbers ----------
+      const derived = React.useMemo(() => {
+        const downPayment = purchasePrice * downPct;
+
+        // Base loan before financed fees
+        let baseLoanAmt = Math.max(0, purchasePrice - downPayment);
+
+        // Add financed fees based on loan type
+        let financedAdd = 0;
+        if (loanType === 'FHA' && fhaFinanceUfmip) {
+          financedAdd += purchasePrice * fhaUfmipPct;
+        }
+        if (loanType === 'VA' && vaFinanceFundingFee) {
+          financedAdd += purchasePrice * vaFundingFeePct;
+        }
+        const loanAmt = baseLoanAmt + financedAdd;
+
+        const monthlyPAndI = monthlyPI(loanAmt, rate, termYears);
+        const monthlyTaxes = (purchasePrice * taxRate) / 12;
+        const monthlyIns = insAnnual / 12;
+
+        // Mortgage insurance / funding fee monthly components
+        let monthlyMI = 0; // PMI or FHA MIP monthly; VA has none
+        if (loanType === 'Conventional' && downPct < 0.20) {
+          monthlyMI = (loanAmt * pmiAnnualPct) / 12;
+        }
+        if (loanType === 'FHA') {
+          monthlyMI = (loanAmt * fhaAnnualMipPct) / 12;
+        }
+        // VA: no monthly MI
+
+        // Mortgage payment display rule:
+        // If escrowed -> display shows PITI (+ MI if applicable). If non-escrow -> display shows P&I only, with TI & MI listed separately.
+        const displayedMortgagePayment = escrowTI ? (monthlyPAndI + monthlyTaxes + monthlyIns + monthlyMI) : monthlyPAndI;
+
+        // Operating expenses
+        const grossRent = monthlyRent;
+
+        let opexMonthly = 0;
+        if (opexMode === 'simple') {
+          opexMonthly = grossRent * opexSimplePct + hoaMonthly + utilitiesMonthly + otherMonthly; // allow fixed adds even in simple
+        } else {
+          const pctSum = (vacancyPct + managementPct + repairsPct + capexPct);
+          opexMonthly = grossRent * pctSum + hoaMonthly + utilitiesMonthly + otherMonthly;
+        }
+
+        // NOI includes T&I in OpEx for investor analysis (MI excluded)
+        const operatingExpensesInclTI = opexMonthly + monthlyTaxes + monthlyIns;
+        const noi = Math.max(0, grossRent - operatingExpensesInclTI);
+        const monthlyDebtServicePI = monthlyPAndI; // mortgage debt service excludes escrow by definition
+
+        // Cash flow subtracts MI after NOI and P&I (MI is financing-related, not OpEx)
+        const monthlyFinancingExtras = monthlyMI;
+        const monthlyCashFlow = noi - monthlyDebtServicePI - monthlyFinancingExtras; // CF after P&I and MI
+
+        // Cash required to close: down payment + buyer closing costs (% input) + initial rehab + any upfront fees not financed
+        const estClosingCosts = purchasePrice * closingCostPct;
+        let upfrontFeesCash = 0;
+        if (loanType === 'FHA' && !fhaFinanceUfmip) upfrontFeesCash += purchasePrice * fhaUfmipPct;
+        if (loanType === 'VA' && !vaFinanceFundingFee) upfrontFeesCash += purchasePrice * vaFundingFeePct;
+
+        const totalCashToClose = downPayment + estClosingCosts + initialRehab + upfrontFeesCash;
+
+        // Year-1 stats
+        const annualCF = monthlyCashFlow * 12;
+        const yr1Principal = amortizationFirstYearPrincipal(loanAmt, rate, termYears);
+        const equityFromAppreciationYr1 = purchasePrice * appreciationPct;
+
+        // Common ROI definitions under leverage
+        const cashOnCash = totalCashToClose > 0 ? annualCF / totalCashToClose : 0; // Income-only ROI
+        const totalReturnYr1 = totalCashToClose > 0 ? (annualCF + yr1Principal + equityFromAppreciationYr1) / totalCashToClose : 0; // Income + amort + appreciation
+
+        // Simple multi-year projection for CAGR (cash flow grows with rent growth; value grows with appreciation)
+        let value = purchasePrice;
+        let balance = loanAmt;
+        let annualCFProj = annualCF;
+        let cumCF = 0;
+        for (let y = 1; y <= holdYears; y++) {
+          value *= 1 + appreciationPct; // price growth
+          if (y > 1) annualCFProj *= 1 + rentGrowthPct; // CF growth proxy
+          cumCF += annualCFProj;
+          // approximate amortization year by year
+          const yrPrin = amortizationFirstYearPrincipal(balance, rate, termYears - (y - 1));
+          balance = Math.max(0, balance - yrPrin);
+        }
+        const startingEquity = downPayment; // initial equity
+        const endingEquity = value - balance; // market equity before selling costs
+        const simpleEndingWealth = cumCF + (endingEquity - startingEquity); // CF plus equity created
+        const cagr = holdYears > 0 && totalCashToClose > 0
+          ? Math.pow((simpleEndingWealth + totalCashToClose) / totalCashToClose, 1 / holdYears) - 1
+          : 0;
+
+        return {
+          downPayment,
+          loanAmt,
+          monthlyPAndI,
+          monthlyTaxes,
+          monthlyIns,
+          displayedMortgagePayment,
+          tAndI: monthlyTaxes + monthlyIns + monthlyMI,
+          grossRent,
+          opexMonthly,
+          operatingExpensesInclTI,
+          noi,
+          monthlyDebtServicePI,
+          monthlyCashFlow,
+          estClosingCosts,
+          totalCashToClose,
+          annualCF,
+          yr1Principal,
+          equityFromAppreciationYr1,
+          cashOnCash,
+          totalReturnYr1,
+          cagr,
+          valueNow: value,
+          balanceNow: balance,
+          monthlyMI,
+        };
+      }, [purchasePrice, downPct, rate, termYears, escrowTI, taxRate, insAnnual, monthlyRent, opexSimplePct, opexMode, vacancyPct, managementPct, repairsPct, capexPct, utilitiesMonthly, hoaMonthly, otherMonthly, appreciationPct, rentGrowthPct, holdYears, closingCostPct, initialRehab, loanType, pmiAnnualPct, fhaUfmipPct, fhaAnnualMipPct, fhaFinanceUfmip, vaFundingFeePct, vaFinanceFundingFee]);
+
+      // Outperformance must beat ALL three indexes per user instruction
+      const beatsAll = derived.cagr > sp500CAGR && derived.cagr > djiaCAGR && derived.cagr > nasdaqCAGR;
+
+      const [view, setView] = React.useState('snapshot'); // 'snapshot' | 'narrative'
+
+      return (
+        <div className="page" style={{display:'flex', flexDirection:'column', gap:24}}>
+          <h1>Deal Analyzer (Static • PITI • Itemized OpEx • ROI & Index Comparison)</h1>
+
+          {/* Inputs */}
+          <div className="grid-4">
+            <Field label="Purchase Price">
+              <input type="number" value={purchasePrice} onChange={e=>setPurchasePrice(Number(e.target.value))} />
+            </Field>
+            <Field label="Down Payment % (decimal)">
+              <input type="number" step="0.01" value={downPct} onChange={e=>setDownPct(Number(e.target.value))} />
+            </Field>
+            <Field label="Rate (APR as decimal)">
+              <input type="number" step="0.0001" value={rate} onChange={e=>setRate(Number(e.target.value))} />
+            </Field>
+            <Field label="Term (years)">
+              <input type="number" value={termYears} onChange={e=>setTermYears(Number(e.target.value))} />
+            </Field>
+          </div>
+
+          <div className="grid-4">
+            <Field label="Loan Type">
+              <select value={loanType} onChange={(e)=>setLoanType(e.target.value)}>
+                <option value="Conventional">Conventional</option>
+                <option value="FHA">FHA</option>
+                <option value="VA">VA</option>
+              </select>
+            </Field>
+            {loanType === 'Conventional' && (
+              <Field label="PMI Annual % (decimal, if <20% down)">
+                <input type="number" step="0.0001" value={pmiAnnualPct} onChange={e=>setPmiAnnualPct(Number(e.target.value))} />
+              </Field>
+            )}
+            {loanType === 'FHA' && (
+              <>
+                <Field label="FHA Upfront MIP % (UFMIP)">
+                  <input type="number" step="0.0001" value={fhaUfmipPct} onChange={e=>setFhaUfmipPct(Number(e.target.value))} />
+                </Field>
+                <Field label="FHA Annual MIP %">
+                  <input type="number" step="0.0001" value={fhaAnnualMipPct} onChange={e=>setFhaAnnualMipPct(Number(e.target.value))} />
+                </Field>
+                <label style={{display:'flex', alignItems:'center', gap:8, marginTop:24}}>
+                  <input type="checkbox" checked={fhaFinanceUfmip} onChange={(e)=>setFhaFinanceUfmip(e.target.checked)} />
+                  <span>Finance the upfront MIP into the loan</span>
+                </label>
+              </>
+            )}
+            {loanType === 'VA' && (
+              <>
+                <Field label="VA Funding Fee %">
+                  <input type="number" step="0.0001" value={vaFundingFeePct} onChange={e=>setVaFundingFeePct(Number(e.target.value))} />
+                </Field>
+                <label style={{display:'flex', alignItems:'center', gap:8, marginTop:24}}>
+                  <input type="checkbox" checked={vaFinanceFundingFee} onChange={(e)=>setVaFinanceFundingFee(e.target.checked)} />
+                  <span>Finance the funding fee into the loan</span>
+                </label>
+              </>
+            )}
+          </div>
+
+          <div className="grid-4" style={{alignItems:'end'}}>
+            <label style={{display:'flex', alignItems:'center', gap:8}}>
+              <input type="checkbox" checked={escrowTI} onChange={(e)=>setEscrowTI(e.target.checked)} />
+              <span>Escrow taxes & insurance with lender</span>
+            </label>
+            <Field label="Property Tax Rate (annual, decimal)">
+              <input type="number" step="0.0001" value={taxRate} onChange={e=>setTaxRate(Number(e.target.value))} />
+            </Field>
+            <Field label="Insurance (annual $)">
+              <input type="number" value={insAnnual} onChange={e=>setInsAnnual(Number(e.target.value))} />
+            </Field>
+            <Field label="Closing Costs % of Purchase (decimal)">
+              <input type="number" step="0.001" value={closingCostPct} onChange={e=>setClosingCostPct(Number(e.target.value))} />
+            </Field>
+          </div>
+
+          <div className="grid-4">
+            <Field label="Scheduled Rent (monthly)">
+              <input type="number" value={monthlyRent} onChange={e=>setMonthlyRent(Number(e.target.value))} />
+            </Field>
+            <Field label="OpEx Mode">
+              <select value={opexMode} onChange={(e)=>setOpexMode(e.target.value)}>
+                <option value="simple">Simple %</option>
+                <option value="itemized">Itemized</option>
+              </select>
+            </Field>
+            {opexMode === 'simple' && (
+              <Field label="OpEx % of Rent (decimal)">
+                <input type="number" step="0.01" value={opexSimplePct} onChange={e=>setOpexSimplePct(Number(e.target.value))} />
+              </Field>
+            )}
+            <Field label="Initial Remodel / Make-Ready ($)">
+              <input type="number" value={initialRehab} onChange={e=>setInitialRehab(Number(e.target.value))} />
+            </Field>
+          </div>
+
+          {opexMode === 'itemized' && (
+            <div className="grid-4">
+              <Field label="Vacancy % (decimal)"><input type="number" step="0.01" value={vacancyPct} onChange={e=>setVacancyPct(Number(e.target.value))} /></Field>
+              <Field label="Management % (decimal)"><input type="number" step="0.01" value={managementPct} onChange={e=>setManagementPct(Number(e.target.value))} /></Field>
+              <Field label="Repairs & Maint. % (decimal)"><input type="number" step="0.01" value={repairsPct} onChange={e=>setRepairsPct(Number(e.target.value))} /></Field>
+              <Field label="CapEx % (decimal)"><input type="number" step="0.01" value={capexPct} onChange={e=>setCapexPct(Number(e.target.value))} /></Field>
+              <Field label="Utilities (monthly $)"><input type="number" value={utilitiesMonthly} onChange={e=>setUtilitiesMonthly(Number(e.target.value))} /></Field>
+              <Field label="HOA (monthly $)"><input type="number" value={hoaMonthly} onChange={e=>setHoaMonthly(Number(e.target.value))} /></Field>
+              <Field label="Other (monthly $)"><input type="number" value={otherMonthly} onChange={e=>setOtherMonthly(Number(e.target.value))} /></Field>
+            </div>
+          )}
+
+          <div className="grid-3">
+            <Field label="Appreciation %/yr (decimal)"><input type="number" step="0.001" value={appreciationPct} onChange={e=>setAppreciationPct(Number(e.target.value))} /></Field>
+            <Field label="Rent Growth %/yr (decimal)"><input type="number" step="0.001" value={rentGrowthPct} onChange={e=>setRentGrowthPct(Number(e.target.value))} /></Field>
+            <Field label="Hold Years"><input type="number" value={holdYears} onChange={e=>setHoldYears(Number(e.target.value))} /></Field>
+          </div>
+
+          <div className="grid-3">
+            <Field label="S&P 500 CAGR (assumed)"><input type="number" step="0.001" value={sp500CAGR} onChange={e=>setSp500CAGR(Number(e.target.value))} /></Field>
+            <Field label="Dow Jones CAGR (assumed)"><input type="number" step="0.001" value={djiaCAGR} onChange={e=>setDjiaCAGR(Number(e.target.value))} /></Field>
+            <Field label="NASDAQ CAGR (assumed)"><input type="number" step="0.001" value={nasdaqCAGR} onChange={e=>setNasdaqCAGR(Number(e.target.value))} /></Field>
+          </div>
+
+          {/* View toggles */}
+          <div className="btns">
+            <button className={"btn " + (view === 'snapshot' ? 'active' : '')} onClick={()=>setView('snapshot')}>Snapshot</button>
+            <button className={"btn " + (view === 'narrative' ? 'active' : '')} onClick={()=>setView('narrative')}>Narrative</button>
+          </div>
+
+          {view === 'snapshot' && (
+            <div className="grid-main">
+              <Section title="Mortgage">
+                <Row label="Loan Type" value={loanType} />
+                <Row label="Down Payment" value={"$"+fmt(derived.downPayment)} />
+                <Row label="Loan Amount" value={"$"+fmt(derived.loanAmt)} />
+                <Row label={"Mortgage Payment " + (escrowTI ? "(PITI/MI display)" : "(P&I display)")} value={"$"+fmt(derived.displayedMortgagePayment,2)} />
+                {!escrowTI && (
+                  <>
+                    <Row label="Taxes + Insurance (non-escrow)" value={"$"+fmt((derived.tAndI - derived.monthlyMI),2)} />
+                    <Row label="Mortgage Insurance (monthly)" value={"$"+fmt(derived.monthlyMI,2)} />
+                  </>
+                )}
+              </Section>
+
+              <Section title="ROI">
+                <Row label={"Est. Closing Costs ("+pct(closingCostPct)+")"} value={"$"+fmt(derived.estClosingCosts)} />
+                <Row label="Initial Remodel / Make-Ready" value={"$"+fmt(initialRehab)} />
+                <Row label="Total Cash to Close" value={<span style={{fontWeight:700}}>{"$"+fmt(derived.totalCashToClose)}</span>} />
+                <Row label="Annual Cash Flow" value={"$"+fmt(derived.annualCF,2)} />
+                <Row label="Year-1 Principal Paid" value={"$"+fmt(derived.yr1Principal,2)} />
+                <Row label="Year-1 Appreciation Equity" value={"$"+fmt(derived.equityFromAppreciationYr1,2)} />
+                <Row label="Cash-on-Cash (Yr-1)" value={<span>{pct(derived.cashOnCash)}</span>} />
+                <Row label="Total Return (Yr-1)" value={<span>{pct(derived.totalReturnYr1)}</span>} />
+                <Row label={"Projected CAGR ("+holdYears+"y)"} value={<span>{pct(derived.cagr)}</span>} />
+                <div style={{height:8}} />
+                <div className="muted">Index comparison (editable assumptions):</div>
+                <Row label="S&P 500" value={pct(sp500CAGR)} />
+                <Row label="Dow Jones" value={pct(djiaCAGR)} />
+                <Row label="NASDAQ" value={pct(nasdaqCAGR)} />
+                <div className={beatsAll ? "ok" : "warn"} style={{marginTop:8}}>
+                  {beatsAll ? 'This investment is projected to outperform ALL three index CAGRs.' : 'This investment does NOT beat all three index CAGRs.'}
+                </div>
+              </Section>
+
+              <Section title="Income & Expenses">
+                <Row label="Scheduled Rent" value={"$"+fmt(derived.grossRent)} />
+                <Row label="OpEx (incl. T&I)" value={"$"+fmt(derived.operatingExpensesInclTI,2)} />
+                <Row label="NOI" value={<span style={{fontWeight:600}}>{"$"+fmt(derived.noi,2)}</span>} />
+                <Row label="Debt Service (P&I)" value={"$"+fmt(derived.monthlyDebtServicePI,2)} />
+                <Row label="Monthly Cash Flow" value={<span style={{fontWeight:700}}>{"$"+fmt(derived.monthlyCashFlow,2)}</span>} />
+              </Section>
+            </div>
+          )}
+
+          {view === 'narrative' && (
+            <Section title="Narrative">
+              <p style={{margin:'8px 0'}}>
+                You will need to save <strong>{"$"+fmt(derived.totalCashToClose)}</strong> for closing. Of this, the down payment is <strong>{"$"+fmt(derived.downPayment)}</strong>, estimated buyer closing costs are <strong>{"$"+fmt(derived.estClosingCosts)}</strong> ({pct(closingCostPct)} of purchase), and we included <strong>{"$"+fmt(initialRehab)}</strong> for initial remodel/make-ready work.
+              </p>
+              <p style={{margin:'8px 0'}}>
+                With a <strong>{loanType}</strong> loan of <strong>{"$"+fmt(derived.loanAmt)}</strong> at {pct(rate)} for {termYears} years, your base mortgage payment is <strong>{"$"+fmt(derived.monthlyPAndI,2)}</strong> for principal & interest. Property taxes and insurance total <strong>{"$"+fmt((derived.tAndI - derived.monthlyMI),2)}</strong> per month and mortgage insurance adds <strong>{"$"+fmt(derived.monthlyMI,2)}</strong> when applicable. {escrowTI ? 'Because you escrow, your displayed mortgage payment includes taxes, insurance, and any MI.' : 'Because you do not escrow, your lender payment shows only P&I; you’ll pay taxes/insurance and any MI directly.'}
+              </p>
+              <p style={{margin:'8px 0'}}>
+                At a scheduled rent of <strong>{"$"+fmt(derived.grossRent)}</strong> and operating expenses of <strong>{"$"+fmt(derived.operatingExpensesInclTI,2)}</strong> (including taxes & insurance), your net operating income is <strong>{"$"+fmt(derived.noi,2)}</strong>. After debt service of <strong>{"$"+fmt(derived.monthlyDebtServicePI,2)}</strong> (P&I) and mortgage-insurance costs of <strong>{"$"+fmt(derived.monthlyMI,2)}</strong>, projected monthly cash flow is <strong>{"$"+fmt(derived.monthlyCashFlow,2)}</strong>.
+              </p>
+              <p style={{margin:'8px 0'}}>
+                In year one, you expect about <strong>{"$"+fmt(derived.annualCF,2)}</strong> in cash flow, <strong>{"$"+fmt(derived.yr1Principal,2)}</strong> in principal paydown, and <strong>{"$"+fmt(derived.equityFromAppreciationYr1,2)}</strong> in appreciation at {pct(appreciationPct)}. That’s a cash-on-cash of <strong>{pct(derived.cashOnCash)}</strong> (income ÷ cash invested) and a total year-one return of <strong>{pct(derived.totalReturnYr1)}</strong> (income + amortization + appreciation ÷ cash invested).
+              </p>
+              <p style={{margin:'8px 0'}}>
+                Over a {holdYears}-year hold (rent growth {pct(rentGrowthPct)}, appreciation {pct(appreciationPct)}), your simple projected CAGR is <strong>{pct(derived.cagr)}</strong>. For context, you entered S&P 500 {pct(sp500CAGR)}, Dow {pct(djiaCAGR)}, and NASDAQ {pct(nasdaqCAGR)}. {beatsAll ? 'Based on these inputs, this deal is projected to outperform all three index CAGRs.' : 'Based on these inputs, this deal does not beat all three index CAGRs.'}
+              </p>
+              <p className="note">
+                Notes: Taxes & insurance are treated as operating expenses for NOI consistency. PMI/MIP are financing costs and excluded from NOI but included in cash flow. ROI figures are simplified and exclude income taxes and transaction/exit costs.
+              </p>
+              <a className="more" href="moreinfo.html" target="_blank" rel="noreferrer">Learn more about these metrics</a>
+            </Section>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<InvestmentAnalyzer />);
+  </script>
 </body>
 </html>
