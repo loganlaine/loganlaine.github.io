@@ -1,153 +1,178 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Real Estate Deal Analyzer</title>
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: linear-gradient(180deg, #f3f4f6, #e5e7eb);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: #111827;
-    }
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#f4f6fb" />
 
-    .page {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 48px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 48px;
-    }
+  <title>Real Estate Deal Analyzers</title>
 
-    header {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    h1 {
-      font-size: 36px;
-      font-weight: 800;
-      margin: 0;
-    }
-
-    .subtitle {
-      font-size: 16px;
-      color: #374151;
-      max-width: 720px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 24px;
-    }
-
-    @media (max-width: 720px) {
-      .grid { grid-template-columns: 1fr; }
-    }
-
-    .card {
-      background: #ffffffcc;
-      backdrop-filter: blur(6px);
-      border: 1px solid #e5e7eb;
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 20px 30px rgba(0,0,0,0.06);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .card h2 {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .card p {
-      margin: 0;
-      color: #374151;
-      line-height: 1.5;
-    }
-
-    .actions {
-      margin-top: auto;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 12px 18px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 14px;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .btn-primary {
-      background: #111827;
-      color: #ffffff;
-    }
-
-    .btn-secondary {
-      background: #f9fafb;
-      color: #111827;
-      border: 1px solid #e5e7eb;
-    }
-
-    footer {
-      margin-top: 32px;
-      font-size: 12px;
-      color: #6b7280;
-    }
-  </style>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="./favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="./favicon-16.png" sizes="16x16">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 </head>
+
 <body>
   <div class="page">
-    <header>
-      <h1>Real Estate Deal AnalyzeR</h1>
-      <div class="subtitle">
-        Conservative, first‑year underwriting tools for real‑world investors.
-        No projections. No hype. Just clean math.
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <a class="brand" href="./index.html" aria-label="Home">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div>
+            <div class="brand-title">Deal Analyzers</div>
+            <div class="brand-subtitle">Turnkey • BRRRR • Flip</div>
+          </div>
+        </a>
+
+        <nav class="nav" aria-label="Primary navigation">
+          <a href="./turnkey.html">Turnkey</a>
+          <a href="./brrrr.html">BRRRR</a>
+          <a href="./flip.html">Flip</a>
+        </nav>
       </div>
     </header>
 
-    <section class="grid">
-      <div class="card">
-        <h2>Buy & Hold Analyzer</h2>
-        <p>
-          Analyze a traditional rental property using realistic assumptions.
-          Focuses on first‑year performance, cash flow, and cash‑on‑cash return.
+    <!-- Main -->
+    <main class="container">
+      <section class="hero">
+        <div class="kicker">Static • Mobile-friendly • Fast</div>
+        <h1 class="h1">Analyze deals quickly and consistently.</h1>
+        <p class="lede">
+          Choose the analyzer that matches the strategy. Each tool uses the same style and a tailored “More Info”
+          page with definitions and guidance.
         </p>
-        <div class="actions">
-          <a class="btn btn-primary" href="./standard.html">Open Buy & Hold</a>
-          
-        </div>
-      </div>
+      </section>
 
-      <div class="card">
-        <h2>BRRRR Analyzer</h2>
-        <p>
-          Underwrite a BRRRR deal from cash purchase through stabilized refinance.
-          See cash left in, equity created, and post‑refi cash flow.
-        </p>
-        <div class="actions">
-          <a class="btn btn-primary" href="./brrrr.html">Open BRRRR</a>
-        </div>
-      </div>
-    </section>
+      <section class="mt4">
+        <div class="grid grid-3">
+          <!-- Turnkey -->
+          <article class="card">
+            <div class="card-inner">
+              <h2 class="card-title">Turnkey</h2>
+              <p class="card-text">
+                Turnkey buy &amp; hold. Evaluate a long-term rental with little to no rehab.
+              </p>
 
-    <footer>
-      Built for disciplined investors. Assumptions matter. Verify numbers before making decisions.
+              <div class="card-actions">
+                <a class="btn btn-primary" href="./turnkey.html" aria-label="Open Turnkey Analyzer">
+                  Open Analyzer
+                </a>
+                <a class="btn btn-secondary" href="./moreinfo-turnkey.html" aria-label="Open Turnkey More Info">
+                  More Info
+                </a>
+              </div>
+
+              <div class="mt3">
+                <span class="badge ok">Best for: stabilized rentals</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- BRRRR -->
+          <article class="card">
+            <div class="card-inner">
+              <h2 class="card-title">BRRRR</h2>
+              <p class="card-text">
+                Buy, rehab, rent, refinance, repeat. Renovation with a refi to recover capital.
+              </p>
+
+              <div class="card-actions">
+                <a class="btn btn-primary" href="./brrrr.html" aria-label="Open BRRRR Analyzer">
+                  Open Analyzer
+                </a>
+                <a class="btn btn-secondary" href="./moreinfo-brrrr.html" aria-label="Open BRRRR More Info">
+                  More Info
+                </a>
+              </div>
+
+              <div class="mt3">
+                <span class="badge warn">Best for: value-add + refi</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Flip -->
+          <article class="card">
+            <div class="card-inner">
+              <h2 class="card-title">Flip</h2>
+              <p class="card-text">
+                Major renovation and sell. Focus on profit, holding costs, and selling costs.
+              </p>
+
+              <div class="card-actions">
+                <a class="btn btn-primary" href="./flip.html" aria-label="Open Flip Analyzer">
+                  Open Analyzer
+                </a>
+                <a class="btn btn-secondary" href="./moreinfo-flip.html" aria-label="Open Flip More Info">
+                  More Info
+                </a>
+              </div>
+
+              <div class="mt3">
+                <span class="badge bad">Best for: renovate + resale</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="mt4">
+        <div class="card">
+          <div class="card-inner">
+            <h2 class="h2">How to use</h2>
+            <div class="grid grid-2">
+              <div>
+                <h3 class="h3">1) Pick the strategy</h3>
+                <p class="p">
+                  Turnkey for turnkey rentals, BRRRR for rehab + refi, and Flip for rehab + sale.
+                </p>
+              </div>
+              <div>
+                <h3 class="h3">2) Enter assumptions</h3>
+                <p class="p">
+                  Use realistic rents, expenses, taxes/insurance, and financing terms.
+                </p>
+              </div>
+              <div>
+                <h3 class="h3">3) Read the outputs</h3>
+                <p class="p">
+                  Compare cash flow, cash-on-cash, total cash needed, or profit metrics depending on the strategy.
+                </p>
+              </div>
+              <div>
+                <h3 class="h3">4) Check “More Info”</h3>
+                <p class="p">
+                  Each analyzer links to definitions and notes tailored to that strategy.
+                </p>
+              </div>
+            </div>
+
+            <hr class="hr" />
+
+            <div class="alert alert-muted">
+              Tip: On iPhone, add this site to your Home Screen for a fast, app-like experience (Safari → Share → Add to Home Screen).
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-inner">
+        <div>© <span id="year"></span> Deal Analyzers</div>
+        <div class="muted">Built for GitHub Pages • Static HTML/CSS/JS</div>
+      </div>
     </footer>
   </div>
+
+  <script>
+    // Keep footer year current (static-safe)
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>

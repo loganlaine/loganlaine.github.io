@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#f4f6fb" />
+
+  <title>Turnkey Analyzer</title>
+
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="./favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="./favicon-16.png" sizes="16x16">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+</head>
+
+<body>
+  <div class="page">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <a class="brand" href="./index.html" aria-label="Home">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div>
+            <div class="brand-title">Turnkey Analyzer</div>
+            <div class="brand-subtitle">Buy & Hold • Minimal rehab</div>
+          </div>
+        </a>
+
+        <nav class="nav" aria-label="Primary navigation">
+          <a class="active" href="./turnkey.html">Turnkey</a>
+          <a href="./brrrr.html">BRRRR</a>
+          <a href="./flip.html">Flip</a>
+          <a href="./moreinfo-turnkey.html">More Info</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="container">
+      <section class="hero">
+        <div class="kicker">Turnkey • Long-term rental</div>
+        <h1 class="h1">Turnkey Buy &amp; Hold</h1>
+        <p class="lede">
+          Use this for stabilized rentals with minimal work. Includes a small “make-ready” budget (paint, minor fixes).
+          No refinance assumptions.
+        </p>
+      </section>
+
+      <section class="mt4 grid grid-2" style="align-items:start;">
+        <!-- Inputs -->
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Inputs</h2>
+
+            <form class="form" id="form" autocomplete="off">
+              <fieldset class="fieldset">
+                <legend class="legend">Purchase</legend>
+
+                <div class="form-grid">
+                  <div class="col-6">
+                    <label class="label" for="purchasePrice">Purchase Price</label>
+                    <input class="input" id="purchasePrice" inputmode="decimal" type="number" min="0" step="1000" value="350000" />
+                    <div class="help">Total purchase price.</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="closingCostPct">Closing Costs (%)</label>
+                    <input class="input" id="closingCostPct" inputmode="decimal" type="number" min="0" step="0.1" value="3" />
+                    <div class="help">As a percent of purchase price.</div>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="label" for="initialRepairs">Initial Repairs / Make-Ready ($)</label>
+                    <input class="input" id="initialRepairs" inputmode="decimal" type="number" min="0" step="500" value="3000" />
+                    <div class="help">Minor fixes before renting (not a major rehab).</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend class="legend">Financing</legend>
+
+                <div class="form-grid">
+                  <div class="col-6">
+                    <label class="label" for="loanType">Loan Type</label>
+                    <select class="select" id="loanType">
+                      <option value="conventional" selected>Conventional</option>
+                      <option value="va">VA</option>
+                    </select>
+                    <div class="help">VA assumes no PMI and typically 0% down.</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="downPaymentPct">Down Payment (%)</label>
+                    <input class="input" id="downPaymentPct" inputmode="decimal" type="number" min="0" max="100" step="0.5" value="20" />
+                    <div class="help">Set to 0% if using VA with no down payment.</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="interestRate">Interest Rate (%)</label>
+                    <input class="input" id="interestRate" inputmode="decimal" type="number" min="0" step="0.01" value="6.75" />
+                    <div class="help">Annual rate.</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="loanYears">Loan Term (years)</label>
+                    <input class="input" id="loanYears" inputmode="numeric" type="number" min="1" step="1" value="30" />
+                    <div class="help">Usually 30.</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend class="legend">Income</legend>
+
+                <div class="form-grid">
+                  <div class="col-12">
+                    <label class="label" for="monthlyRent">Monthly Rent ($)</label>
+                    <input class="input" id="monthlyRent" inputmode="decimal" type="number" min="0" step="50" value="2400" />
+                    <div class="help">Gross rent (before vacancy/expenses).</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend class="legend">Operating Expenses</legend>
+
+                <div class="row" style="justify-content:space-between;">
+                  <label class="toggle" for="itemize">
+                    <input id="itemize" type="checkbox" />
+                    <span>Itemize expenses</span>
+                  </label>
+
+                  <div class="badge" id="expenseModeBadge">Using % of rent</div>
+                </div>
+
+                <div class="mt3" id="percentMode">
+                  <div class="form-grid">
+                    <div class="col-12">
+                      <label class="label" for="opexPct">Operating Expenses (% of rent)</label>
+                      <input class="input" id="opexPct" inputmode="decimal" type="number" min="0" step="0.5" value="35" />
+                      <div class="help">
+                        Covers vacancy, repairs, capex, property management, utilities paid by owner, etc.
+                        (Taxes/insurance handled separately below.)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt3 hidden" id="itemizedMode">
+                  <div class="form-grid">
+                    <div class="col-6">
+                      <label class="label" for="vacancyPct">Vacancy (%)</label>
+                      <input class="input" id="vacancyPct" inputmode="decimal" type="number" min="0" step="0.5" value="5" />
+                    </div>
+
+                    <div class="col-6">
+                      <label class="label" for="managementPct">Management (%)</label>
+                      <input class="input" id="managementPct" inputmode="decimal" type="number" min="0" step="0.5" value="8" />
+                    </div>
+
+                    <div class="col-6">
+                      <label class="label" for="repairsPct">Repairs (%)</label>
+                      <input class="input" id="repairsPct" inputmode="decimal" type="number" min="0" step="0.5" value="5" />
+                    </div>
+
+                    <div class="col-6">
+                      <label class="label" for="capexPct">CapEx (%)</label>
+                      <input class="input" id="capexPct" inputmode="decimal" type="number" min="0" step="0.5" value="5" />
+                    </div>
+
+                    <div class="col-12">
+                      <label class="label" for="otherMonthly">Other Monthly ($)</label>
+                      <input class="input" id="otherMonthly" inputmode="decimal" type="number" min="0" step="10" value="0" />
+                      <div class="help">HOA, utilities you pay, lawn/snow, etc.</div>
+                    </div>
+                  </div>
+
+                  <div class="alert alert-muted mt3">
+                    Itemized percentages are applied to gross rent. Taxes/insurance are below.
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend class="legend">Taxes &amp; Insurance</legend>
+
+                <div class="form-grid">
+                  <div class="col-6">
+                    <label class="label" for="propertyTaxRate">Property Tax Rate (% / year)</label>
+                    <input class="input" id="propertyTaxRate" inputmode="decimal" type="number" min="0" step="0.01" value="1.10" />
+                    <div class="help">Annual rate applied to purchase price.</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="insuranceMonthly">Insurance ($ / month)</label>
+                    <input class="input" id="insuranceMonthly" inputmode="decimal" type="number" min="0" step="10" value="150" />
+                    <div class="help">Monthly homeowners insurance estimate.</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="row">
+                <button class="btn btn-primary" type="button" id="recalcBtn">Recalculate</button>
+                <button class="btn btn-ghost" type="button" id="resetBtn">Reset defaults</button>
+              </div>
+
+              <div class="alert alert-muted">
+                Notes: This is an estimator. It does not include income taxes, depreciation, rent growth, or appreciation.
+              </div>
+            </form>
+          </div>
+        </article>
+
+        <!-- Outputs -->
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Results</h2>
+
+            <div class="stats">
+              <div class="stat">
+                <div class="stat-label">Monthly Cash Flow</div>
+                <div class="stat-value" id="cashFlow">$0</div>
+                <div class="help" id="cashFlowHint"></div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-label">Cash to Close</div>
+                <div class="stat-value" id="cashToClose">$0</div>
+                <div class="help">Down payment + closing + initial repairs.</div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-label">Cash-on-Cash (Year 1)</div>
+                <div class="stat-value" id="coc">0%</div>
+                <div class="help">Annual cash flow ÷ cash to close.</div>
+              </div>
+            </div>
+
+            <hr class="hr" />
+
+            <div class="results">
+              <div class="table-wrap">
+                <table aria-label="Monthly breakdown">
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th class="right">Monthly</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Rent</td>
+                      <td class="right" id="tRent">$0</td>
+                    </tr>
+                    <tr>
+                      <td>Operating Expenses</td>
+                      <td class="right" id="tOpex">$0</td>
+                    </tr>
+                    <tr>
+                      <td>Mortgage (P&amp;I)</td>
+                      <td class="right" id="tPI">$0</td>
+                    </tr>
+                    <tr>
+                      <td>Property Taxes</td>
+                      <td class="right" id="tTaxes">$0</td>
+                    </tr>
+                    <tr>
+                      <td>Insurance</td>
+                      <td class="right" id="tIns">$0</td>
+                    </tr>
+                    <tr id="pmiRow">
+                      <td>PMI</td>
+                      <td class="right" id="tPMI">$0</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Total Costs</strong></td>
+                      <td class="right" id="tCosts"><strong>$0</strong></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Net Cash Flow</strong></td>
+                      <td class="right" id="tNet"><strong>$0</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="alert mt3" id="dealBadgeWrap">
+                <div class="row" style="justify-content:space-between;">
+                  <div>
+                    <div style="font-weight:750; margin-bottom:4px;">Quick read</div>
+                    <div class="muted" id="quickRead">—</div>
+                  </div>
+                  <span class="badge" id="dealBadge">—</span>
+                </div>
+              </div>
+
+              <div class="card-actions">
+                <a class="btn btn-secondary" href="./moreinfo-turnkey.html">More Info</a>
+                <a class="btn btn-ghost" href="./index.html">Back</a>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div>© <span id="year"></span> Deal Analyzers</div>
+        <div class="muted">Turnkey • Static • Local calculations</div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // ---------- Helpers ----------
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function num(v) {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function money(n) {
+      const x = Number.isFinite(n) ? n : 0;
+      return x.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+    }
+
+    function money2(n) {
+      const x = Number.isFinite(n) ? n : 0;
+      return x.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 2 });
+    }
+
+    function pct(n) {
+      const x = Number.isFinite(n) ? n : 0;
+      return (x * 100).toFixed(2) + "%";
+    }
+
+    // Monthly payment for fixed-rate amortizing loan
+    function monthlyPI(loanAmount, annualRatePct, years) {
+      const P = Math.max(0, loanAmount);
+      const r = Math.max(0, annualRatePct) / 100 / 12;
+      const n = Math.max(1, Math.round(years * 12));
+
+      if (P === 0) return 0;
+      if (r === 0) return P / n;
+
+      // M = P * r(1+r)^n / ((1+r)^n - 1)
+      const pow = Math.pow(1 + r, n);
+      return P * (r * pow) / (pow - 1);
+    }
+
+    // Simple PMI estimate (conventional, <20% down)
+    // Keep this intentionally conservative/simplified.
+    function estimatedPMI(loanAmount, downPct) {
+      if (downPct >= 20) return 0;
+      // Approx 0.5% annually of loan amount (varies by credit/DTI)
+      const annual = 0.005 * loanAmount;
+      return annual / 12;
+    }
+
+    // ---------- DOM ----------
+    const $ = (id) => document.getElementById(id);
+
+    const els = {
+      purchasePrice: $("purchasePrice"),
+      closingCostPct: $("closingCostPct"),
+      initialRepairs: $("initialRepairs"),
+
+      loanType: $("loanType"),
+      downPaymentPct: $("downPaymentPct"),
+      interestRate: $("interestRate"),
+      loanYears: $("loanYears"),
+
+      monthlyRent: $("monthlyRent"),
+
+      itemize: $("itemize"),
+      expenseModeBadge: $("expenseModeBadge"),
+      percentMode: $("percentMode"),
+      itemizedMode: $("itemizedMode"),
+
+      opexPct: $("opexPct"),
+      vacancyPct: $("vacancyPct"),
+      managementPct: $("managementPct"),
+      repairsPct: $("repairsPct"),
+      capexPct: $("capexPct"),
+      otherMonthly: $("otherMonthly"),
+
+      propertyTaxRate: $("propertyTaxRate"),
+      insuranceMonthly: $("insuranceMonthly"),
+
+      // outputs
+      cashFlow: $("cashFlow"),
+      cashFlowHint: $("cashFlowHint"),
+      cashToClose: $("cashToClose"),
+      coc: $("coc"),
+
+      tRent: $("tRent"),
+      tOpex: $("tOpex"),
+      tPI: $("tPI"),
+      tTaxes: $("tTaxes"),
+      tIns: $("tIns"),
+      pmiRow: $("pmiRow"),
+      tPMI: $("tPMI"),
+      tCosts: $("tCosts"),
+      tNet: $("tNet"),
+
+      quickRead: $("quickRead"),
+      dealBadge: $("dealBadge"),
+      dealBadgeWrap: $("dealBadgeWrap"),
+
+      recalcBtn: $("recalcBtn"),
+      resetBtn: $("resetBtn"),
+
+      year: $("year"),
+    };
+
+    // ---------- Defaults ----------
+    const DEFAULTS = {
+      purchasePrice: 350000,
+      closingCostPct: 3,
+      initialRepairs: 3000,
+
+      loanType: "conventional",
+      downPaymentPct: 20,
+      interestRate: 6.75,
+      loanYears: 30,
+
+      monthlyRent: 2400,
+
+      itemize: false,
+      opexPct: 35,
+
+      vacancyPct: 5,
+      managementPct: 8,
+      repairsPct: 5,
+      capexPct: 5,
+      otherMonthly: 0,
+
+      propertyTaxRate: 1.10,
+      insuranceMonthly: 150
+    };
+
+    function applyDefaults() {
+      els.purchasePrice.value = DEFAULTS.purchasePrice;
+      els.closingCostPct.value = DEFAULTS.closingCostPct;
+      els.initialRepairs.value = DEFAULTS.initialRepairs;
+
+      els.loanType.value = DEFAULTS.loanType;
+      els.downPaymentPct.value = DEFAULTS.downPaymentPct;
+      els.interestRate.value = DEFAULTS.interestRate;
+      els.loanYears.value = DEFAULTS.loanYears;
+
+      els.monthlyRent.value = DEFAULTS.monthlyRent;
+
+      els.itemize.checked = DEFAULTS.itemize;
+      els.opexPct.value = DEFAULTS.opexPct;
+
+      els.vacancyPct.value = DEFAULTS.vacancyPct;
+      els.managementPct.value = DEFAULTS.managementPct;
+      els.repairsPct.value = DEFAULTS.repairsPct;
+      els.capexPct.value = DEFAULTS.capexPct;
+      els.otherMonthly.value = DEFAULTS.otherMonthly;
+
+      els.propertyTaxRate.value = DEFAULTS.propertyTaxRate;
+      els.insuranceMonthly.value = DEFAULTS.insuranceMonthly;
+
+      syncExpenseModeUI();
+      recalc();
+    }
+
+    // ---------- UI Logic ----------
+    function syncExpenseModeUI() {
+      const itemized = els.itemize.checked;
+      els.percentMode.classList.toggle("hidden", itemized);
+      els.itemizedMode.classList.toggle("hidden", !itemized);
+
+      if (itemized) {
+        els.expenseModeBadge.textContent = "Itemized expenses";
+      } else {
+        els.expenseModeBadge.textContent = "Using % of rent";
+      }
+    }
+
+    function setDealBadge(cashFlowMonthly, cocYear1) {
+      // Very simple rubric. You can refine later.
+      // - Cash flow thresholds are just directional, not universal.
+      let badgeText = "Neutral";
+      let badgeClass = "badge warn";
+      let quick = "Run comps, verify expenses, and sanity-check rent.";
+
+      if (cashFlowMonthly >= 300 && cocYear1 >= 0.10) {
+        badgeText = "Strong";
+        badgeClass = "badge ok";
+        quick = "Looks strong on paper: positive cash flow and solid cash-on-cash. Verify rent/expenses.";
+      } else if (cashFlowMonthly >= 100 && cocYear1 >= 0.06) {
+        badgeText = "Decent";
+        badgeClass = "badge warn";
+        quick = "Probably workable if assumptions hold. Watch repairs/capex/management and confirm taxes/insurance.";
+      } else if (cashFlowMonthly < 0) {
+        badgeText = "Weak";
+        badgeClass = "badge bad";
+        quick = "Negative cash flow. Consider price, rent, financing, or expense assumptions before proceeding.";
+      } else {
+        badgeText = "Borderline";
+        badgeClass = "badge warn";
+        quick = "Thin margins. Small changes in rent or expenses can flip the outcome.";
+      }
+
+      els.dealBadge.className = badgeClass;
+      els.dealBadge.textContent = badgeText;
+      els.quickRead.textContent = quick;
+
+      // Hint under cashflow
+      if (cashFlowMonthly >= 0) {
+        els.cashFlowHint.textContent = "Positive monthly cash flow (before income taxes).";
+      } else {
+        els.cashFlowHint.textContent = "Negative monthly cash flow. Re-check assumptions.";
+      }
+    }
+
+    // ---------- Calculation ----------
+    function recalc() {
+      const purchasePrice = num(els.purchasePrice.value);
+      const closingCostPct = num(els.closingCostPct.value) / 100;
+      const initialRepairs = num(els.initialRepairs.value);
+
+      const loanType = els.loanType.value;
+      let downPct = num(els.downPaymentPct.value);
+
+      // If VA, allow 0% down; if user sets something else, accept it.
+      downPct = clamp(downPct, 0, 100);
+
+      const interestRate = num(els.interestRate.value);
+      const loanYears = num(els.loanYears.value);
+
+      const rent = num(els.monthlyRent.value);
+
+      const propertyTaxRate = num(els.propertyTaxRate.value) / 100;
+      const insuranceMonthly = num(els.insuranceMonthly.value);
+
+      // Financing
+      const downPayment = purchasePrice * (downPct / 100);
+      const loanAmount = Math.max(0, purchasePrice - downPayment);
+      const pi = monthlyPI(loanAmount, interestRate, loanYears);
+
+      // Taxes / insurance
+      const taxesMonthly = (purchasePrice * propertyTaxRate) / 12;
+
+      // PMI
+      let pmi = 0;
+      if (loanType === "conventional") {
+        pmi = estimatedPMI(loanAmount, downPct);
+      } else {
+        // VA: no PMI
+        pmi = 0;
+      }
+
+      // OpEx
+      const itemized = els.itemize.checked;
+      let opexMonthly = 0;
+
+      if (!itemized) {
+        const opexPct = clamp(num(els.opexPct.value), 0, 100) / 100;
+        opexMonthly = rent * opexPct;
+      } else {
+        const vacancy = clamp(num(els.vacancyPct.value), 0, 100) / 100;
+        const mgmt = clamp(num(els.managementPct.value), 0, 100) / 100;
+        const repairs = clamp(num(els.repairsPct.value), 0, 100) / 100;
+        const capex = clamp(num(els.capexPct.value), 0, 100) / 100;
+        const other = Math.max(0, num(els.otherMonthly.value));
+
+        opexMonthly = rent * (vacancy + mgmt + repairs + capex) + other;
+      }
+
+      const totalCosts = opexMonthly + pi + taxesMonthly + insuranceMonthly + pmi;
+      const net = rent - totalCosts;
+
+      // Cash to close
+      const closingCosts = purchasePrice * closingCostPct;
+      const cashToClose = downPayment + closingCosts + initialRepairs;
+
+      // Cash-on-cash
+      const annualCashFlow = net * 12;
+      const coc = cashToClose > 0 ? (annualCashFlow / cashToClose) : 0;
+
+      // ---------- Render ----------
+      els.cashFlow.textContent = money(net);
+      els.cashToClose.textContent = money(cashToClose);
+      els.coc.textContent = pct(coc);
+
+      els.tRent.textContent = money(rent);
+      els.tOpex.textContent = money(opexMonthly);
+      els.tPI.textContent = money(pi);
+      els.tTaxes.textContent = money(taxesMonthly);
+      els.tIns.textContent = money(insuranceMonthly);
+
+      if (pmi > 0.01) {
+        els.pmiRow.classList.remove("hidden");
+        els.tPMI.textContent = money(pmi);
+      } else {
+        els.pmiRow.classList.add("hidden");
+        els.tPMI.textContent = money(0);
+      }
+
+      els.tCosts.innerHTML = "<strong>" + money(totalCosts) + "</strong>";
+      els.tNet.innerHTML = "<strong>" + money(net) + "</strong>";
+
+      setDealBadge(net, coc);
+    }
+
+    // ---------- Events ----------
+    function hookEvents() {
+      // Recalc on input change (mobile-friendly)
+      const inputs = document.querySelectorAll("input, select");
+      inputs.forEach((el) => {
+        el.addEventListener("input", () => {
+          if (el.id === "itemize") return;
+          recalc();
+        });
+        el.addEventListener("change", () => {
+          if (el.id === "loanType") {
+            // If VA, default down payment to 0 if user had 20 and hasn't adjusted
+            if (els.loanType.value === "va" && num(els.downPaymentPct.value) === 20) {
+              els.downPaymentPct.value = 0;
+            }
+          }
+          recalc();
+        });
+      });
+
+      els.itemize.addEventListener("change", () => {
+        syncExpenseModeUI();
+        recalc();
+      });
+
+      els.recalcBtn.addEventListener("click", recalc);
+      els.resetBtn.addEventListener("click", applyDefaults);
+    }
+
+    // Init
+    els.year.textContent = new Date().getFullYear();
+    hookEvents();
+    applyDefaults();
+  </script>
+</body>
+</html>

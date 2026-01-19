@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#f4f6fb" />
+
+  <title>More Info • BRRRR</title>
+
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="./favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="./favicon-16.png" sizes="16x16">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+</head>
+
+<body>
+  <div class="page">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <a class="brand" href="./index.html" aria-label="Home">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div>
+            <div class="brand-title">More Info</div>
+            <div class="brand-subtitle">BRRRR (Buy, Rehab, Rent, Refi)</div>
+          </div>
+        </a>
+
+        <nav class="nav" aria-label="Primary navigation">
+          <a href="./turnkey.html">Turnkey</a>
+          <a class="active" href="./brrrr.html">BRRRR</a>
+          <a href="./flip.html">Flip</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div class="kicker">Definitions • Assumptions • Pitfalls</div>
+        <h1 class="h1">BRRRR: What the calculator means</h1>
+        <p class="lede">
+          This page explains the terms used in the BRRRR analyzer and how to interpret the outputs.
+          BRRRR is sensitive to assumptions—especially ARV, rehab budget, timeline, and refinance terms.
+        </p>
+      </section>
+
+      <section class="mt4 grid grid-2">
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">BRRRR Strategy</h2>
+            <p class="p">
+              BRRRR is a value-add rental strategy:
+            </p>
+            <ul class="p" style="margin-top:0; padding-left:18px;">
+              <li><strong>Buy</strong> below (or at) value</li>
+              <li><strong>Rehab</strong> to improve condition and value</li>
+              <li><strong>Rent</strong> to stabilize income</li>
+              <li><strong>Refi</strong> based on the improved value (ARV)</li>
+              <li><strong>Repeat</strong> using recycled capital</li>
+            </ul>
+            <div class="alert alert-muted">
+              The goal is usually to recover most (or all) of your invested cash at refinance while still cash flowing.
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Key Outputs</h2>
+
+            <div class="table-wrap">
+              <table aria-label="Key outputs">
+                <thead>
+                  <tr>
+                    <th>Output</th>
+                    <th>Meaning</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="code">Cash Invested (pre-refi)</span></td>
+                    <td>Down payment + purchase closing + rehab budget + estimated holding costs.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="code">Net Refi Proceeds (approx)</span></td>
+                    <td>New refi loan − payoff of purchase loan − refi closing costs.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="code">Cash Left In Deal</span></td>
+                    <td>Cash invested − net refi proceeds (if negative, you pulled more out than you put in).</td>
+                  </tr>
+                  <tr>
+                    <td><span class="code">Post-Refi Cash Flow</span></td>
+                    <td>Stabilized rent − (OpEx + refi P&amp;I + taxes + insurance).</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="alert alert-warn mt3">
+              The “net refi proceeds” is an estimate. Real proceeds depend on lender rules, seasoning, appraisal, DSCR, and closing fees.
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="mt4">
+        <div class="card">
+          <div class="card-inner">
+            <h2 class="h2">ARV, LTV, and the Refi Loan</h2>
+            <div class="grid grid-2">
+              <div>
+                <h3 class="h3">ARV (After Repair Value)</h3>
+                <p class="p">
+                  ARV is the estimated market value after rehab. It usually comes from comps (recent comparable sales),
+                  adjusted for size, condition, features, and location.
+                </p>
+                <div class="alert alert-muted">
+                  ARV is the single most important number in BRRRR. If ARV is wrong, everything else becomes noise.
+                </div>
+              </div>
+
+              <div>
+                <h3 class="h3">LTV (Loan-to-Value)</h3>
+                <p class="p">
+                  LTV is the refinance loan amount as a percent of the appraised value (often ARV).
+                  Example: ARV $400k at 75% LTV → refi loan $300k.
+                </p>
+                <div class="alert alert-muted">
+                  Many lenders use DSCR and may cap loan size based on rent, not just LTV.
+                </div>
+              </div>
+            </div>
+
+            <hr class="hr" />
+
+            <h3 class="h3">Why “Cash Left In” matters</h3>
+            <p class="p">
+              Cash left in is a practical measure of how “recyclable” your capital is. Lower cash left in means
+              you can repeat faster. But it’s still important that the stabilized deal cash flows.
+            </p>
+
+            <div class="alert alert-ok">
+              A common BRRRR “win” is: small (or zero) cash left in + positive stabilized cash flow.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mt4 grid grid-2">
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Holding Costs</h2>
+            <p class="p">
+              The calculator estimates holding costs as:
+            </p>
+            <div class="table-wrap">
+              <table aria-label="Holding cost formula">
+                <thead>
+                  <tr>
+                    <th>Component</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Loan payment (monthly)</td>
+                    <td>Interest-only or amortizing payment on the purchase loan.</td>
+                  </tr>
+                  <tr>
+                    <td>Taxes &amp; insurance (monthly)</td>
+                    <td>A monthly estimate during rehab; this may differ after stabilization.</td>
+                  </tr>
+                  <tr>
+                    <td>Other holding (monthly)</td>
+                    <td>Utilities, lawn/snow, dumpsters, security, etc.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Total holding</strong></td>
+                    <td><strong>Rehab months × (all monthly holding components)</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="alert alert-muted mt3">
+              Reality check: timeline slippage is one of the most common BRRRR killers. Add buffer months.
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Post-Refi Underwriting</h2>
+            <p class="p">
+              Post-refi cash flow is based on stabilized rent and a simplified cost stack:
+              operating expenses (% of rent) + refi mortgage P&amp;I + taxes + insurance.
+            </p>
+            <div class="alert alert-warn">
+              This is not full pro-forma underwriting. It excludes reserves, leasing fees, and rent growth.
+              Use it to compare deals, then validate with detailed underwriting.
+            </div>
+
+            <hr class="hr" />
+
+            <h3 class="h3">Operating Expenses (OpEx)</h3>
+            <p class="p">
+              OpEx usually includes vacancy, management, repairs/maintenance, CapEx reserves, and owner-paid utilities/HOA.
+              Taxes and insurance are modeled separately in this analyzer.
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <section class="mt4">
+        <div class="card">
+          <div class="card-inner">
+            <h2 class="h2">Common BRRRR Pitfalls</h2>
+
+            <div class="grid grid-2">
+              <div>
+                <h3 class="h3">ARV optimism</h3>
+                <p class="p">
+                  Overestimating ARV is the fastest way to “create” a good BRRRR on paper.
+                  Use conservative comps and confirm with an agent/appraiser perspective when possible.
+                </p>
+              </div>
+
+              <div>
+                <h3 class="h3">Rehab budget creep</h3>
+                <p class="p">
+                  Underestimating rehab or missing major systems (roof, sewer, electrical) can destroy the model.
+                  Keep a contingency line in your head even if it isn’t explicitly in the calculator.
+                </p>
+              </div>
+
+              <div>
+                <h3 class="h3">Timeline slip</h3>
+                <p class="p">
+                  Permits, contractors, inspections, supply delays, and weather can add months.
+                  Holding cost is a silent killer—add buffer months.
+                </p>
+              </div>
+
+              <div>
+                <h3 class="h3">Refi reality</h3>
+                <p class="p">
+                  Lenders may require seasoning, DSCR minimums, and will have closing costs that vary.
+                  Your actual proceeds may be materially different.
+                </p>
+              </div>
+            </div>
+
+            <div class="alert alert-muted mt3">
+              If the deal only works with perfect assumptions, it probably doesn’t work.
+            </div>
+
+            <div class="card-actions mt3">
+              <a class="btn btn-primary" href="./brrrr.html">Back to BRRRR</a>
+              <a class="btn btn-secondary" href="./index.html">Home</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div>© <span id="year"></span> Deal Analyzers</div>
+        <div class="muted">More Info • BRRRR</div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

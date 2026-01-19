@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#f4f6fb" />
+
+  <title>Flip Analyzer</title>
+
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="./favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="./favicon-16.png" sizes="16x16">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+</head>
+
+<body>
+  <div class="page">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <a class="brand" href="./index.html" aria-label="Home">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div>
+            <div class="brand-title">Flip Analyzer</div>
+            <div class="brand-subtitle">Rehab • Sell • Profit</div>
+          </div>
+        </a>
+
+        <nav class="nav" aria-label="Primary navigation">
+          <a href="./turnkey.html">Turnkey</a>
+          <a href="./brrrr.html">BRRRR</a>
+          <a class="active" href="./flip.html">Flip</a>
+          <a href="./moreinfo-flip.html">More Info</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div class="kicker">Value-add • Resale</div>
+        <h1 class="h1">Fix &amp; Flip Deal Analysis</h1>
+        <p class="lede">
+          Model a heavy rehab and resale. Estimates all-in cost, net sale proceeds, profit, ROI, and annualized ROI.
+          This is an estimator (good for comparing deals; not a closing statement).
+        </p>
+      </section>
+
+      <section class="mt4 grid grid-2" style="align-items:start;">
+        <!-- Inputs -->
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Inputs</h2>
+
+            <form class="form" id="form" autocomplete="off">
+              <fieldset class="fieldset">
+                <legend class="legend">Purchase</legend>
+
+                <div class="form-grid">
+                  <div class="col-6">
+                    <label class="label" for="purchasePrice">Purchase Price</label>
+                    <input class="input" id="purchasePrice" type="number" min="0" step="1000" inputmode="decimal" value="220000" />
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="purchaseClosingPct">Purchase Closing Costs (%)</label>
+                    <input class="input" id="purchaseClosingPct" type="number" min="0" step="0.1" inputmode="decimal" value="3" />
+                    <div class="help">As a percent of purchase price.</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend class="legend">Rehab &amp; Timeline</legend>
+
+                <div class="form-grid">
+                  <div class="col-12">
+                    <label class="label" for="rehabBudget">Rehab Budget ($)</label>
+                    <input class="input" id="rehabBudget" type="number" min="0" step="1000" inputmode="decimal" value="65000" />
+                    <div class="help">Total renovation cost.</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="rehabMonths">Rehab Duration (months)</label>
+                    <input class="input" id="rehabMonths" type="number" min="0" step="1" inputmode="numeric" value="4" />
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="saleMonths">List/Market/Closing (months)</label>
+                    <input class="input" id="saleMonths" type="number" min="0" step="1" inputmode="numeric" value="2" />
+                    <div class="help">Time from rehab completion to sale closing.</div>
+                  </div>
+                </div>
+
+                <div class="alert alert-muted mt3">
+                  Total holding period = rehab months + sale months.
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend class="legend">Financing (for holding costs)</legend>
+
+                <div class="form-grid">
+                  <div class="col-6">
+                    <label class="label" for="downPaymentPct">Down Payment (%)</label>
+                    <input class="input" id="downPaymentPct" type="number" min="0" max="100" step="0.5" inputmode="decimal" value="15" />
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="rate">Interest Rate (%)</label>
+                    <input class="input" id="rate" type="number" min="0" step="0.01" inputmode="decimal" value="10.5" />
+                    <div class="help">Used to estimate monthly loan payment during holding.</div>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="label" for="paymentType">Holding-period payment type</label>
+                    <select class="select" id="paymentType">
+                      <option value="interestOnly" selected>Interest-only (common hard money)</option>
+                      <option value="amortizing">Amortizing (principal &amp; interest)</option>
+                    </select>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="loanYears">If amortizing: Term (years)</label>
+                    <input class="input" id="loanYears" type="number" min="1" step="1" inputmode="numeric" value="30" />
+                    <div class="help">Only used if “Amortizing” is selected.</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="pointsPct">Lender Points (% of loan)</label>
+                    <input class="input" id="pointsPct" type="number" min="0" step="0.25" inputmode="decimal" value="2" />
+                    <div class="help">Added to costs (paid at close).</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend class="legend">Holding Costs (monthly)</legend>
+
+                <div class="form-grid">
+                  <div class="col-6">
+                    <label class="label" for="taxInsMonthly">Taxes &amp; Insurance ($ / month)</label>
+                    <input class="input" id="taxInsMonthly" type="number" min="0" step="10" inputmode="decimal" value="350" />
+                    <div class="help">Estimate during rehab/market period.</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="utilitiesMonthly">Utilities / Other ($ / month)</label>
+                    <input class="input" id="utilitiesMonthly" type="number" min="0" step="10" inputmode="decimal" value="300" />
+                    <div class="help">Utilities, lawn/snow, staging storage, etc.</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend class="legend">Sale</legend>
+
+                <div class="form-grid">
+                  <div class="col-12">
+                    <label class="label" for="salePrice">Expected Sale Price / ARV ($)</label>
+                    <input class="input" id="salePrice" type="number" min="0" step="1000" inputmode="decimal" value="345000" />
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="agentPct">Agent Commission (%)</label>
+                    <input class="input" id="agentPct" type="number" min="0" step="0.1" inputmode="decimal" value="5.5" />
+                    <div class="help">Often 5–6% total (listing + buyer agent).</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="sellerClosingPct">Seller Closing Costs (%)</label>
+                    <input class="input" id="sellerClosingPct" type="number" min="0" step="0.1" inputmode="decimal" value="1.5" />
+                    <div class="help">Escrow/title, excise (varies), etc.</div>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="label" for="concessions">Repairs/Concessions at Sale ($)</label>
+                    <input class="input" id="concessions" type="number" min="0" step="250" inputmode="decimal" value="0" />
+                    <div class="help">Credits, post-inspection repairs, staging, etc. (optional).</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="row">
+                <button class="btn btn-primary" type="button" id="recalcBtn">Recalculate</button>
+                <button class="btn btn-ghost" type="button" id="resetBtn">Reset defaults</button>
+              </div>
+
+              <div class="alert alert-muted">
+                Notes: This model assumes rehab is paid out-of-pocket (not financed). It estimates interest cost on the purchase loan only.
+              </div>
+            </form>
+          </div>
+        </article>
+
+        <!-- Outputs -->
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Results</h2>
+
+            <div class="stats">
+              <div class="stat">
+                <div class="stat-label">Profit (Net)</div>
+                <div class="stat-value" id="profit">$0</div>
+                <div class="help">Net sale proceeds − all-in costs.</div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-label">ROI (on cash invested)</div>
+                <div class="stat-value" id="roi">0%</div>
+                <div class="help">Profit ÷ cash invested.</div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-label">Annualized ROI</div>
+                <div class="stat-value" id="aroi">0%</div>
+                <div class="help">Based on total holding months.</div>
+              </div>
+            </div>
+
+            <hr class="hr" />
+
+            <div class="table-wrap">
+              <table aria-label="Flip breakdown">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th class="right">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Cash Invested (estimated)</td>
+                    <td class="right" id="tCashInvested">$0</td>
+                  </tr>
+                  <tr>
+                    <td>All-in Cost</td>
+                    <td class="right" id="tAllIn">$0</td>
+                  </tr>
+                  <tr>
+                    <td>Holding Costs (total)</td>
+                    <td class="right" id="tHolding">$0</td>
+                  </tr>
+                  <tr>
+                    <td>Net Sale Proceeds</td>
+                    <td class="right" id="tNetSale">$0</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Profit</strong></td>
+                    <td class="right" id="tProfit"><strong>$0</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Break-even Sale Price (approx)</td>
+                    <td class="right" id="tBreakeven">$0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="alert mt3" id="quickWrap">
+              <div class="row" style="justify-content:space-between;">
+                <div>
+                  <div style="font-weight:750; margin-bottom:4px;">Quick read</div>
+                  <div class="muted" id="quickRead">—</div>
+                </div>
+                <span class="badge" id="badge">—</span>
+              </div>
+            </div>
+
+            <div class="card-actions mt3">
+              <a class="btn btn-secondary" href="./moreinfo-flip.html">More Info</a>
+              <a class="btn btn-ghost" href="./index.html">Back</a>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div>© <span id="year"></span> Deal Analyzers</div>
+        <div class="muted">Flip • Static • Local calculations</div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // -------- Helpers --------
+    function num(v) {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function money(n, digits = 0) {
+      const x = Number.isFinite(n) ? n : 0;
+      return x.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: digits });
+    }
+
+    function pct(x) {
+      const n = Number.isFinite(x) ? x : 0;
+      return (n * 100).toFixed(2) + "%";
+    }
+
+    function monthlyPI(loanAmount, annualRatePct, years) {
+      const P = Math.max(0, loanAmount);
+      const r = Math.max(0, annualRatePct) / 100 / 12;
+      const n = Math.max(1, Math.round(years * 12));
+      if (P === 0) return 0;
+      if (r === 0) return P / n;
+      const pow = Math.pow(1 + r, n);
+      return P * (r * pow) / (pow - 1);
+    }
+
+    function monthlyInterestOnly(loanAmount, annualRatePct) {
+      const P = Math.max(0, loanAmount);
+      const r = Math.max(0, annualRatePct) / 100 / 12;
+      return P * r;
+    }
+
+    // -------- DOM --------
+    const $ = (id) => document.getElementById(id);
+
+    const els = {
+      purchasePrice: $("purchasePrice"),
+      purchaseClosingPct: $("purchaseClosingPct"),
+
+      rehabBudget: $("rehabBudget"),
+      rehabMonths: $("rehabMonths"),
+      saleMonths: $("saleMonths"),
+
+      downPaymentPct: $("downPaymentPct"),
+      rate: $("rate"),
+      paymentType: $("paymentType"),
+      loanYears: $("loanYears"),
+      pointsPct: $("pointsPct"),
+
+      taxInsMonthly: $("taxInsMonthly"),
+      utilitiesMonthly: $("utilitiesMonthly"),
+
+      salePrice: $("salePrice"),
+      agentPct: $("agentPct"),
+      sellerClosingPct: $("sellerClosingPct"),
+      concessions: $("concessions"),
+
+      profit: $("profit"),
+      roi: $("roi"),
+      aroi: $("aroi"),
+
+      tCashInvested: $("tCashInvested"),
+      tAllIn: $("tAllIn"),
+      tHolding: $("tHolding"),
+      tNetSale: $("tNetSale"),
+      tProfit: $("tProfit"),
+      tBreakeven: $("tBreakeven"),
+
+      quickRead: $("quickRead"),
+      badge: $("badge"),
+
+      recalcBtn: $("recalcBtn"),
+      resetBtn: $("resetBtn"),
+      year: $("year"),
+    };
+
+    const DEFAULTS = {
+      purchasePrice: 220000,
+      purchaseClosingPct: 3,
+
+      rehabBudget: 65000,
+      rehabMonths: 4,
+      saleMonths: 2,
+
+      downPaymentPct: 15,
+      rate: 10.5,
+      paymentType: "interestOnly",
+      loanYears: 30,
+      pointsPct: 2,
+
+      taxInsMonthly: 350,
+      utilitiesMonthly: 300,
+
+      salePrice: 345000,
+      agentPct: 5.5,
+      sellerClosingPct: 1.5,
+      concessions: 0
+    };
+
+    function applyDefaults() {
+      for (const [k, v] of Object.entries(DEFAULTS)) {
+        if (els[k]) els[k].value = v;
+      }
+      recalc();
+    }
+
+    function setQuickRead(profit, roi, holdingMonths) {
+      // Directional rubric.
+      let badgeText = "Neutral";
+      let badgeClass = "badge warn";
+      let msg = "Verify ARV comps, scope, timeline, and selling costs. Small overruns matter a lot.";
+
+      if (profit >= 30000 && roi >= 0.20 && holdingMonths <= 8) {
+        badgeText = "Strong";
+        badgeClass = "badge ok";
+        msg = "Looks strong on paper: solid profit and ROI with a reasonable timeline. Double-check scope creep and comps.";
+      } else if (profit > 0 && roi >= 0.10) {
+        badgeText = "Decent";
+        badgeClass = "badge warn";
+        msg = "Potentially workable, but margins may be thin depending on surprises. Validate contingencies and holding time.";
+      } else if (profit <= 0) {
+        badgeText = "Weak";
+        badgeClass = "badge bad";
+        msg = "Projected loss or break-even. Re-check purchase price, rehab budget, holding costs, and sale assumptions.";
+      } else {
+        badgeText = "Borderline";
+        badgeClass = "badge warn";
+        msg = "Thin margins. Consider negotiating price, reducing scope, or increasing sale price confidence.";
+      }
+
+      els.badge.className = badgeClass;
+      els.badge.textContent = badgeText;
+      els.quickRead.textContent = msg;
+    }
+
+    function recalc() {
+      const purchasePrice = Math.max(0, num(els.purchasePrice.value));
+      const purchaseClosingPct = clamp(num(els.purchaseClosingPct.value), 0, 100) / 100;
+
+      const rehabBudget = Math.max(0, num(els.rehabBudget.value));
+      const rehabMonths = Math.max(0, Math.round(num(els.rehabMonths.value)));
+      const saleMonths = Math.max(0, Math.round(num(els.saleMonths.value)));
+      const holdingMonths = rehabMonths + saleMonths;
+
+      const downPct = clamp(num(els.downPaymentPct.value), 0, 100) / 100;
+      const rate = Math.max(0, num(els.rate.value));
+      const paymentType = els.paymentType.value;
+      const loanYears = Math.max(1, Math.round(num(els.loanYears.value)));
+      const pointsPct = clamp(num(els.pointsPct.value), 0, 100) / 100;
+
+      const taxInsMonthly = Math.max(0, num(els.taxInsMonthly.value));
+      const utilitiesMonthly = Math.max(0, num(els.utilitiesMonthly.value));
+
+      const salePrice = Math.max(0, num(els.salePrice.value));
+      const agentPct = clamp(num(els.agentPct.value), 0, 100) / 100;
+      const sellerClosingPct = clamp(num(els.sellerClosingPct.value), 0, 100) / 100;
+      const concessions = Math.max(0, num(els.concessions.value));
+
+      // Purchase financing
+      const downPayment = purchasePrice * downPct;
+      const loanAmount = Math.max(0, purchasePrice - downPayment);
+
+      // Points (assume points apply to loan amount)
+      const pointsCost = loanAmount * pointsPct;
+
+      // Holding loan payment estimate
+      let loanPaymentMonthly = 0;
+      if (paymentType === "interestOnly") {
+        loanPaymentMonthly = monthlyInterestOnly(loanAmount, rate);
+      } else {
+        loanPaymentMonthly = monthlyPI(loanAmount, rate, loanYears);
+      }
+
+      const holdingCostsTotal = holdingMonths * (loanPaymentMonthly + taxInsMonthly + utilitiesMonthly);
+
+      // Purchase closing costs
+      const purchaseClosing = purchasePrice * purchaseClosingPct;
+
+      // All-in costs: purchase + purchase closing + points + rehab + holding + concessions (concessions are sale-side but still a cost)
+      // We'll keep concessions in sale-side calcs for net proceeds, not in all-in.
+      const allInCost = purchasePrice + purchaseClosing + pointsCost + rehabBudget + holdingCostsTotal;
+
+      // Sale costs
+      const agentCost = salePrice * agentPct;
+      const sellerClosing = salePrice * sellerClosingPct;
+      const saleCosts = agentCost + sellerClosing + concessions;
+
+      const netSaleProceeds = salePrice - saleCosts;
+
+      // Profit (net proceeds minus payoff minus invested costs)
+      // IMPORTANT: We assume the loan is paid off at sale, and (for simplicity) payoff ≈ original loan amount.
+      // If amortizing, payoff will be slightly lower; for flips, difference is usually small vs overall noise.
+      const payoff = loanAmount;
+
+      const profit = netSaleProceeds - payoff - (downPayment + purchaseClosing + pointsCost + rehabBudget + holdingCostsTotal);
+
+      // Cash invested: down + closing + points + rehab + holding (this matches what you "bring" and pay over time)
+      const cashInvested = downPayment + purchaseClosing + pointsCost + rehabBudget + holdingCostsTotal;
+
+      const roi = cashInvested > 0 ? (profit / cashInvested) : 0;
+
+      // Annualized ROI (compound) over holding period
+      let aroi = 0;
+      if (cashInvested > 0 && holdingMonths > 0) {
+        const multiple = 1 + (profit / cashInvested);
+        if (multiple > 0) {
+          aroi = Math.pow(multiple, 12 / holdingMonths) - 1;
+        } else {
+          aroi = -1; // total loss beyond 100% (theoretical)
+        }
+      }
+
+      // Break-even sale price (solve salePrice - saleCosts(salePrice) - payoff - cashInvested = 0)
+      // saleCosts(salePrice) = salePrice*(agentPct + sellerClosingPct) + concessions
+      // => salePrice*(1 - agentPct - sellerClosingPct) - concessions - payoff - cashInvested = 0
+      // => salePrice = (concessions + payoff + cashInvested) / (1 - agentPct - sellerClosingPct)
+      const denom = 1 - agentPct - sellerClosingPct;
+      const breakeven = denom > 0 ? (concessions + payoff + cashInvested) / denom : 0;
+
+      // Render
+      els.profit.textContent = money(profit);
+      els.roi.textContent = pct(roi);
+      els.aroi.textContent = pct(aroi);
+
+      els.tCashInvested.textContent = money(cashInvested);
+      els.tAllIn.textContent = money(allInCost);
+      els.tHolding.textContent = money(holdingCostsTotal);
+      els.tNetSale.textContent = money(netSaleProceeds);
+      els.tProfit.innerHTML = "<strong>" + money(profit) + "</strong>";
+      els.tBreakeven.textContent = money(breakeven);
+
+      setQuickRead(profit, roi, holdingMonths);
+    }
+
+    function hookEvents() {
+      document.querySelectorAll("input, select").forEach((el) => {
+        el.addEventListener("input", recalc);
+        el.addEventListener("change", recalc);
+      });
+
+      els.recalcBtn.addEventListener("click", recalc);
+      els.resetBtn.addEventListener("click", applyDefaults);
+    }
+
+    els.year.textContent = new Date().getFullYear();
+    hookEvents();
+    applyDefaults();
+  </script>
+</body>
+</html>

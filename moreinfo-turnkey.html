@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#f4f6fb" />
+
+  <title>More Info • Turnkey</title>
+
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="./favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="./favicon-16.png" sizes="16x16">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+</head>
+
+<body>
+  <div class="page">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <a class="brand" href="./index.html" aria-label="Home">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div>
+            <div class="brand-title">More Info</div>
+            <div class="brand-subtitle">Turnkey (Buy & Hold)</div>
+          </div>
+        </a>
+
+        <nav class="nav" aria-label="Primary navigation">
+          <a href="./turnkey.html">Turnkey</a>
+          <a href="./brrrr.html">BRRRR</a>
+          <a href="./flip.html">Flip</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div class="kicker">Definitions • Assumptions • Tips</div>
+        <h1 class="h1">Turnkey: What the calculator means</h1>
+        <p class="lede">
+          This page explains the terms used in the Turnkey analyzer and the assumptions behind the math.
+          It’s intentionally simple so you can compare deals quickly.
+        </p>
+      </section>
+
+      <section class="mt4 grid grid-2">
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Turnkey Strategy</h2>
+            <p class="p">
+              A turnkey rental is typically “rent-ready” with minimal work needed.
+              The Turnkey analyzer focuses on:
+            </p>
+            <ul class="p" style="margin-top:0; padding-left:18px;">
+              <li>Purchase + financing</li>
+              <li>Stabilized monthly rent</li>
+              <li>Operating expenses (either % or itemized)</li>
+              <li>Taxes, insurance, and (if applicable) PMI</li>
+              <li>Year-1 cash flow and cash-on-cash return</li>
+            </ul>
+            <div class="alert alert-muted">
+              What it does <strong>not</strong> model: rent growth, appreciation, tax benefits, or refinancing.
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Key Outputs</h2>
+
+            <div class="table-wrap">
+              <table aria-label="Key outputs">
+                <thead>
+                  <tr>
+                    <th>Output</th>
+                    <th>Meaning</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="code">Monthly Cash Flow</span></td>
+                    <td>Rent minus operating expenses, mortgage P&amp;I, taxes, insurance, and PMI (if any).</td>
+                  </tr>
+                  <tr>
+                    <td><span class="code">Cash to Close</span></td>
+                    <td>Down payment + purchase closing costs + initial repairs/make-ready.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="code">Cash-on-Cash (Year 1)</span></td>
+                    <td>(Monthly cash flow × 12) ÷ cash to close.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="alert alert-muted mt3">
+              Cash-on-cash is a simple “year 1 efficiency” metric. It’s useful for comparing rentals, but it is not the full story.
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="mt4">
+        <div class="card">
+          <div class="card-inner">
+            <h2 class="h2">Expense Modeling</h2>
+            <div class="grid grid-2">
+              <div>
+                <h3 class="h3">% of Rent Mode</h3>
+                <p class="p">
+                  Operating expenses are estimated as a single percent of gross rent.
+                  This is fast and good for quick filters.
+                </p>
+                <div class="alert alert-muted">
+                  Typical ranges vary widely by property/market. If unsure, start conservative.
+                </div>
+              </div>
+
+              <div>
+                <h3 class="h3">Itemized Mode</h3>
+                <p class="p">
+                  Vacancy, management, repairs, and capex are entered as percentages of gross rent, plus “Other Monthly.”
+                </p>
+                <div class="alert alert-muted">
+                  Itemizing can reduce surprises — but only if your inputs are realistic.
+                </div>
+              </div>
+            </div>
+
+            <hr class="hr" />
+
+            <h3 class="h3">What counts as Operating Expenses?</h3>
+            <p class="p">
+              In this calculator, operating expenses generally include vacancy, property management, repairs/maintenance,
+              capital expenditures (CapEx reserves), and any owner-paid utilities/HOA/yard/snow.
+            </p>
+            <div class="alert alert-warn">
+              Property taxes and insurance are handled separately in the calculator (they are not included in the OpEx %).
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mt4 grid grid-2">
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">PMI (Conventional Loans)</h2>
+            <p class="p">
+              PMI is estimated if your down payment is less than 20% and the loan type is “Conventional.”
+              PMI rates vary based on credit score, DTI, and lender.
+            </p>
+            <div class="alert alert-muted">
+              The calculator uses a simple estimate (directional). If PMI meaningfully impacts the deal,
+              confirm the real PMI quote with your lender.
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Taxes &amp; Insurance</h2>
+            <p class="p">
+              Property tax is modeled as a yearly percent applied to the purchase price, then divided monthly.
+              Insurance is entered as a monthly estimate.
+            </p>
+            <div class="alert alert-muted">
+              These can be the biggest “gotchas.” Always validate with county records and insurance quotes.
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="mt4">
+        <div class="card">
+          <div class="card-inner">
+            <h2 class="h2">Initial Repairs / Make-Ready</h2>
+            <p class="p">
+              Turnkey deals often still need small costs before renting: paint touch-ups, minor plumbing/electrical,
+              locks, smoke detectors, landscaping cleanup, etc.
+            </p>
+            <div class="alert alert-muted">
+              This is treated as part of your “cash to close” because it’s real cash out of pocket near purchase.
+            </div>
+
+            <hr class="hr" />
+
+            <h2 class="h2">Practical Use</h2>
+            <div class="grid grid-2">
+              <div>
+                <h3 class="h3">Quick screening</h3>
+                <p class="p">
+                  Start with conservative rent and a conservative OpEx %. If it still cash flows, it’s worth deeper review.
+                </p>
+              </div>
+              <div>
+                <h3 class="h3">Deeper underwriting</h3>
+                <p class="p">
+                  Switch to itemized mode and validate taxes/insurance. Add HOA/utilities to “Other Monthly.”
+                </p>
+              </div>
+            </div>
+
+            <div class="card-actions mt3">
+              <a class="btn btn-primary" href="./turnkey.html">Back to Turnkey</a>
+              <a class="btn btn-secondary" href="./index.html">Home</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div>© <span id="year"></span> Deal Analyzers</div>
+        <div class="muted">More Info • Turnkey</div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

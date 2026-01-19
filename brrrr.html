@@ -1,212 +1,560 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Deal Analyzer - Year 1</title>
-  <style>
-    body {
-      margin: 0;
-      background: linear-gradient(180deg, #f3f4f6, #e5e7eb);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: #111827;
-    }
-    .page { max-width: 1100px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 24px; }
-    h1 { font-size: 26px; font-weight: 700; margin: 0; }
-    .card {
-      background: #ffffffcc;
-      backdrop-filter: blur(6px);
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-    }
-    .muted { color: #6b7280; font-size: 12px; }
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#f4f6fb" />
+  <title>BRRRR Analyzer</title>
 
-    .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-    @media (max-width: 900px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 520px) { .grid-4 { grid-template-columns: 1fr; } }
-
-    .grid-kpi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-    @media (max-width: 900px) { .grid-kpi { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 520px) { .grid-kpi { grid-template-columns: 1fr; } }
-
-    label {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 12px;
-      background: #f9fafb;
-      padding: 10px;
-      border-radius: 10px;
-      box-shadow: inset 0 0 0 1px #e5e7eb;
-    }
-    input, select {
-      padding: 8px;
-      border-radius: 8px;
-      border: 1px solid #d1d5db;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .kpi {
-      padding: 12px;
-      border-radius: 12px;
-      background: linear-gradient(180deg, #ffffff, #f9fafb);
-      box-shadow: inset 0 0 0 1px #e5e7eb;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .kpi .value { font-size: 22px; font-weight: 700; }
-    .positive { color: #065f46; }
-    .negative { color: #991b1b; }
-    .toggle { display: flex; gap: 8px; align-items: center; font-size: 13px; }
-  </style>
-
-  <!-- React 17 UMD (stable with inline Babel) -->
-  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="./favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="./favicon-16.png" sizes="16x16">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 </head>
+
 <body>
-<div id="root"></div>
-
-<script type="text/babel">
-const { useState, useMemo } = React;
-
-const fmt = n => n.toLocaleString(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
-const fmtPct = n => (n * 100).toFixed(1) + '%';
-
-function monthlyPI(loan, rate, years) {
-  const r = rate / 12;
-  const n = years * 12;
-  if (rate === 0) return loan / n;
-  return loan * r / (1 - Math.pow(1 + r, -n));
-}
-
-function InvestmentAnalyzer() {
-  const [price, setPrice] = useState(400000);
-  const [downPct, setDownPct] = useState(0.2);
-  const [rate, setRate] = useState(0.07);
-  const [loanType, setLoanType] = useState('Conventional');
-  const [rent, setRent] = useState(4000);
-  const [opexPct, setOpexPct] = useState(0.4);
-  const [taxRate, setTaxRate] = useState(0.012);
-  const [insuranceAnnual, setInsuranceAnnual] = useState(1400);
-  const [closingPct, setClosingPct] = useState(0.02);
-  const [rehab, setRehab] = useState(0);
-
-  const [itemized, setItemized] = useState(false);
-  const [vacancy, setVacancy] = useState(0.05);
-  const [management, setManagement] = useState(0.08);
-  const [repairs, setRepairs] = useState(0.05);
-  const [capex, setCapex] = useState(0.05);
-  const [hoa, setHoa] = useState(0);
-  const [utilities, setUtilities] = useState(0);
-
-  const [pmiPct, setPmiPct] = useState(0.006);
-  const [vaFeePct, setVaFeePct] = useState(0.0215);
-
-  const d = useMemo(() => {
-    const down = price * downPct;
-    let loan = price - down;
-    if (loanType === 'VA') loan += price * vaFeePct;
-
-    const pi = monthlyPI(loan, rate, 30);
-    const taxes = price * taxRate / 12;
-    const insurance = insuranceAnnual / 12;
-
-    let mi = 0;
-    if (loanType === 'Conventional' && downPct < 0.2) mi = loan * pmiPct / 12;
-
-    const gross = rent;
-    const opex = itemized
-      ? gross * (vacancy + management + repairs + capex) + hoa + utilities
-      : gross * opexPct;
-
-    const piti = pi + taxes + insurance + mi;
-    const cashFlow = gross - opex - piti;
-    const cashToClose = down + price * closingPct + rehab;
-    const coc = cashToClose > 0 ? (cashFlow * 12) / cashToClose : 0;
-
-    return { pi, taxes, insurance, mi, opex, gross, piti, cashFlow, cashToClose, coc };
-  }, [price, downPct, rate, loanType, rent, opexPct, taxRate, insuranceAnnual, closingPct, rehab, itemized, vacancy, management, repairs, capex, hoa, utilities, pmiPct, vaFeePct]);
-
-  return (
-    <div className="page">
-      <h1>Deal Analyzer – Year 1</h1>
-      <a href="moreinfo.html" style={{fontSize:13,color:'#2563eb',textDecoration:'none',alignSelf:'flex-start'}}>More info / definitions →</a>
-
-      <div className="card">
-        <div className="grid-4">
-          <label>Purchase Price<input type="number" value={price} onChange={e=>setPrice(+e.target.value)} /></label>
-          <label>Down %<input type="number" step="0.01" value={downPct} onChange={e=>setDownPct(+e.target.value)} /></label>
-          <label>Rate<input type="number" step="0.001" value={rate} onChange={e=>setRate(+e.target.value)} /></label>
-          <label>Loan Type<select value={loanType} onChange={e=>setLoanType(e.target.value)}><option>Conventional</option><option>VA</option></select></label>
-          <label>
-  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-    <span>Monthly Rent</span>
-    <a
-      href="https://www.huduser.gov/portal/datasets/fmr/fmrs/FY2026_code/select_Geography.odn"
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{fontSize:11,color:'#2563eb',textDecoration:'none'}}
-    >
-      HUD FMR
-    </a>
-  </div>
-  <input type="number" value={rent} onChange={e=>setRent(+e.target.value)} />
-</label>
-          <label>OpEx %<input type="number" step="0.01" value={opexPct} onChange={e=>setOpexPct(+e.target.value)} /></label>
-          <label>Property Tax Rate<input type="number" step="0.001" value={taxRate} onChange={e=>setTaxRate(+e.target.value)} /></label>
-          <label>Insurance (annual)<input type="number" value={insuranceAnnual} onChange={e=>setInsuranceAnnual(+e.target.value)} /></label>
-          <label>Closing %<input type="number" step="0.01" value={closingPct} onChange={e=>setClosingPct(+e.target.value)} /></label>
-          <label>Initial Rehab<input type="number" value={rehab} onChange={e=>setRehab(+e.target.value)} /></label>
-        </div>
-
-        <label className="toggle" style={{marginTop:16}}>
-          <input type="checkbox" checked={itemized} onChange={e=>setItemized(e.target.checked)} />
-          Itemized Expenses
-        </label>
-
-        {itemized && (
-          <div className="grid-4" style={{marginTop:12}}>
-            <label>Vacancy %<input type="number" step="0.01" value={vacancy} onChange={e=>setVacancy(+e.target.value)} /></label>
-            <label>Management %<input type="number" step="0.01" value={management} onChange={e=>setManagement(+e.target.value)} /></label>
-            <label>Repairs %<input type="number" step="0.01" value={repairs} onChange={e=>setRepairs(+e.target.value)} /></label>
-            <label>CapEx %<input type="number" step="0.01" value={capex} onChange={e=>setCapex(+e.target.value)} /></label>
-            <label>HOA (mo)<input type="number" value={hoa} onChange={e=>setHoa(+e.target.value)} /></label>
-            <label>Utilities (mo)<input type="number" value={utilities} onChange={e=>setUtilities(+e.target.value)} /></label>
+  <div class="page">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <a class="brand" href="./index.html" aria-label="Home">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div>
+            <div class="brand-title">BRRRR Analyzer</div>
+            <div class="brand-subtitle">Buy • Rehab • Rent • Refi • Repeat</div>
           </div>
-        )}
-      </div>
+        </a>
 
-      <div className="card grid-kpi">
-        <div className="kpi"><div className="muted">PITI</div><div className="value">{fmt(d.piti)}</div></div>
-        <div className="kpi"><div className="muted">Monthly Cash Flow</div><div className={`value ${d.cashFlow >= 0 ? 'positive' : 'negative'}`}>{fmt(d.cashFlow)}</div></div>
-        <div className="kpi"><div className="muted">Cash to Close</div><div className="value">{fmt(d.cashToClose)}</div></div>
-        <div className="kpi"><div className="muted">Cash-on-Cash (Yr 1)</div><div className={`value ${d.coc >= 0 ? 'positive' : 'negative'}`}>{fmtPct(d.coc)}</div></div>
+        <nav class="nav" aria-label="Primary navigation">
+          <a href="./turnkey.html">Turnkey</a>
+          <a class="active" href="./brrrr.html">BRRRR</a>
+          <a href="./flip.html">Flip</a>
+          <a href="./moreinfo-brrrr.html">More Info</a>
+        </nav>
       </div>
+    </header>
 
-      <div className="card">
-        <div style={{fontSize:13}}>
-          <div className="muted">PITI Breakdown</div>
-          <div>P&I: {fmt(d.pi)}</div>
-          <div>Taxes: {fmt(d.taxes)}</div>
-          <div>Insurance: {fmt(d.insurance)}</div>
-          <div>MI: {fmt(d.mi)}</div>
-          <hr />
-          <div className="muted">Cash Flow Calculation</div>
-          <div>Rent: {fmt(d.gross)}</div>
-          <div>Operating Expenses: {fmt(d.opex)}</div>
-          <div>PITI: {fmt(d.piti)}</div>
-        </div>
+    <main class="container">
+      <section class="hero">
+        <div class="kicker">Value-add • Refinance • Hold</div>
+        <h1 class="h1">BRRRR Deal Analysis</h1>
+        <p class="lede">
+          Model a heavy rehab rental and a refinance. This estimates cash invested, refi proceeds, cash left in the deal,
+          and stabilized cash flow after refi.
+        </p>
+      </section>
+
+      <section class="mt4 grid grid-2" style="align-items:start;">
+        <!-- Inputs -->
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Inputs</h2>
+
+            <form class="form" id="form" autocomplete="off">
+              <fieldset class="fieldset">
+                <legend class="legend">Purchase</legend>
+
+                <div class="form-grid">
+                  <div class="col-6">
+                    <label class="label" for="purchasePrice">Purchase Price</label>
+                    <input class="input" id="purchasePrice" type="number" min="0" step="1000" inputmode="decimal" value="250000" />
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="closingCostPct">Purchase Closing Costs (%)</label>
+                    <input class="input" id="closingCostPct" type="number" min="0" step="0.1" inputmode="decimal" value="3" />
+                    <div class="help">As a percent of purchase price.</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend class="legend">Purchase Financing (Bridge / Hard Money / Conventional)</legend>
+
+                <div class="form-grid">
+                  <div class="col-6">
+                    <label class="label" for="downPaymentPct">Down Payment (%)</label>
+                    <input class="input" id="downPaymentPct" type="number" min="0" max="100" step="0.5" inputmode="decimal" value="15" />
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="purchaseRate">Interest Rate (%)</label>
+                    <input class="input" id="purchaseRate" type="number" min="0" step="0.01" inputmode="decimal" value="10.5" />
+                    <div class="help">For rehab period interest cost.</div>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="label" for="interestOnly">Rehab-period payment type</label>
+                    <select class="select" id="interestOnly">
+                      <option value="interestOnly" selected>Interest-only (common for bridge/hard money)</option>
+                      <option value="amortizing">Amortizing (principal &amp; interest)</option>
+                    </select>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="purchaseTermYears">If amortizing: Term (years)</label>
+                    <input class="input" id="purchaseTermYears" type="number" min="1" step="1" inputmode="numeric" value="30" />
+                    <div class="help">Only used if “Amortizing” is selected.</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="rehabMonths">Rehab / Hold Duration (months)</label>
+                    <input class="input" id="rehabMonths" type="number" min="0" step="1" inputmode="numeric" value="5" />
+                    <div class="help">Months until stabilized and ready to refi.</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend class="legend">Rehab &amp; Carry</legend>
+
+                <div class="form-grid">
+                  <div class="col-12">
+                    <label class="label" for="rehabBudget">Rehab Budget ($)</label>
+                    <input class="input" id="rehabBudget" type="number" min="0" step="1000" inputmode="decimal" value="60000" />
+                    <div class="help">Total renovation cost paid during rehab.</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="otherHoldMonthly">Other Holding Costs ($ / month)</label>
+                    <input class="input" id="otherHoldMonthly" type="number" min="0" step="50" inputmode="decimal" value="300" />
+                    <div class="help">Utilities, lawn/snow, etc. during rehab.</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="taxInsHoldMonthly">Taxes &amp; Insurance ($ / month)</label>
+                    <input class="input" id="taxInsHoldMonthly" type="number" min="0" step="10" inputmode="decimal" value="350" />
+                    <div class="help">Estimate during rehab (not stabilized underwriting).</div>
+                  </div>
+                </div>
+
+                <div class="alert alert-muted mt3">
+                  Holding cost estimate = rehab months × (loan payment + taxes/insurance + other holding).
+                  This is a simplification (high confidence for directional use, not exact).
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend class="legend">Refinance Assumptions</legend>
+
+                <div class="form-grid">
+                  <div class="col-6">
+                    <label class="label" for="arv">After Repair Value (ARV) ($)</label>
+                    <input class="input" id="arv" type="number" min="0" step="1000" inputmode="decimal" value="360000" />
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="refiLtv">Refi LTV (%)</label>
+                    <input class="input" id="refiLtv" type="number" min="0" max="100" step="0.5" inputmode="decimal" value="75" />
+                    <div class="help">New loan amount = ARV × LTV.</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="refiRate">Refi Interest Rate (%)</label>
+                    <input class="input" id="refiRate" type="number" min="0" step="0.01" inputmode="decimal" value="6.75" />
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="refiYears">Refi Term (years)</label>
+                    <input class="input" id="refiYears" type="number" min="1" step="1" inputmode="numeric" value="30" />
+                  </div>
+
+                  <div class="col-12">
+                    <label class="label" for="refiClosingPct">Refi Closing Costs (% of new loan)</label>
+                    <input class="input" id="refiClosingPct" type="number" min="0" step="0.1" inputmode="decimal" value="2.0" />
+                    <div class="help">Assumed paid out-of-pocket at refi (not rolled into loan).</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend class="legend">Stabilized Rental (After Refi)</legend>
+
+                <div class="form-grid">
+                  <div class="col-12">
+                    <label class="label" for="rent">Monthly Rent ($)</label>
+                    <input class="input" id="rent" type="number" min="0" step="50" inputmode="decimal" value="2600" />
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="taxRate">Property Tax Rate (% / year)</label>
+                    <input class="input" id="taxRate" type="number" min="0" step="0.01" inputmode="decimal" value="1.10" />
+                    <div class="help">Applied to ARV (common underwriting choice).</div>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="label" for="insMonthly">Insurance ($ / month)</label>
+                    <input class="input" id="insMonthly" type="number" min="0" step="10" inputmode="decimal" value="160" />
+                  </div>
+
+                  <div class="col-12">
+                    <label class="label" for="opexPct">Operating Expenses (% of rent)</label>
+                    <input class="input" id="opexPct" type="number" min="0" step="0.5" inputmode="decimal" value="35" />
+                    <div class="help">Vacancy/repairs/capex/management/etc. (taxes/insurance handled separately above).</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="row">
+                <button class="btn btn-primary" type="button" id="recalcBtn">Recalculate</button>
+                <button class="btn btn-ghost" type="button" id="resetBtn">Reset defaults</button>
+              </div>
+
+              <div class="alert alert-muted">
+                Notes: This is a simplified BRRRR model. It assumes the purchase loan balance at refi equals the original loan amount
+                (good fit for interest-only; approximation for amortizing).
+              </div>
+            </form>
+          </div>
+        </article>
+
+        <!-- Outputs -->
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Results</h2>
+
+            <div class="stats">
+              <div class="stat">
+                <div class="stat-label">Cash Invested (pre-refi)</div>
+                <div class="stat-value" id="cashInvested">$0</div>
+                <div class="help">Down + purchase closing + rehab + holding costs.</div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-label">Cash Left In Deal (after refi)</div>
+                <div class="stat-value" id="cashLeftIn">$0</div>
+                <div class="help">Invested minus net refi proceeds.</div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-label">Post-Refi Cash Flow</div>
+                <div class="stat-value" id="postCashflow">$0</div>
+                <div class="help">Monthly, stabilized.</div>
+              </div>
+            </div>
+
+            <hr class="hr" />
+
+            <div class="table-wrap">
+              <table aria-label="BRRRR breakdown">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th class="right">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Purchase Loan Amount</td>
+                    <td class="right" id="tPurchaseLoan">$0</td>
+                  </tr>
+                  <tr>
+                    <td>Estimated Holding Costs (total)</td>
+                    <td class="right" id="tHoldingTotal">$0</td>
+                  </tr>
+                  <tr>
+                    <td>New Refi Loan (ARV × LTV)</td>
+                    <td class="right" id="tRefiLoan">$0</td>
+                  </tr>
+                  <tr>
+                    <td>Refi Closing Costs</td>
+                    <td class="right" id="tRefiClosing">$0</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Net Refi Proceeds (approx)</strong></td>
+                    <td class="right" id="tNetProceeds"><strong>$0</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Equity Created (ARV − total basis)</td>
+                    <td class="right" id="tEquity">$0</td>
+                  </tr>
+                  <tr>
+                    <td>Cash-on-Cash (post-refi)</td>
+                    <td class="right" id="tCoC">0%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="alert mt3" id="quickWrap">
+              <div class="row" style="justify-content:space-between;">
+                <div>
+                  <div style="font-weight:750; margin-bottom:4px;">Quick read</div>
+                  <div class="muted" id="quickRead">—</div>
+                </div>
+                <span class="badge" id="badge">—</span>
+              </div>
+            </div>
+
+            <div class="card-actions mt3">
+              <a class="btn btn-secondary" href="./moreinfo-brrrr.html">More Info</a>
+              <a class="btn btn-ghost" href="./index.html">Back</a>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div>© <span id="year"></span> Deal Analyzers</div>
+        <div class="muted">BRRRR • Static • Local calculations</div>
       </div>
-    </div>
-  );
-}
+    </footer>
+  </div>
 
-ReactDOM.render(<InvestmentAnalyzer />, document.getElementById('root'));
-</script>
+  <script>
+    // -------- Helpers --------
+    function num(v) {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function money(n, digits = 0) {
+      const x = Number.isFinite(n) ? n : 0;
+      return x.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: digits });
+    }
+
+    function pct(x) {
+      const n = Number.isFinite(x) ? x : 0;
+      return (n * 100).toFixed(2) + "%";
+    }
+
+    function monthlyPI(loanAmount, annualRatePct, years) {
+      const P = Math.max(0, loanAmount);
+      const r = Math.max(0, annualRatePct) / 100 / 12;
+      const n = Math.max(1, Math.round(years * 12));
+      if (P === 0) return 0;
+      if (r === 0) return P / n;
+      const pow = Math.pow(1 + r, n);
+      return P * (r * pow) / (pow - 1);
+    }
+
+    function monthlyInterestOnly(loanAmount, annualRatePct) {
+      const P = Math.max(0, loanAmount);
+      const r = Math.max(0, annualRatePct) / 100 / 12;
+      return P * r;
+    }
+
+    // -------- DOM --------
+    const $ = (id) => document.getElementById(id);
+
+    const els = {
+      purchasePrice: $("purchasePrice"),
+      closingCostPct: $("closingCostPct"),
+      downPaymentPct: $("downPaymentPct"),
+      purchaseRate: $("purchaseRate"),
+      interestOnly: $("interestOnly"),
+      purchaseTermYears: $("purchaseTermYears"),
+      rehabMonths: $("rehabMonths"),
+
+      rehabBudget: $("rehabBudget"),
+      otherHoldMonthly: $("otherHoldMonthly"),
+      taxInsHoldMonthly: $("taxInsHoldMonthly"),
+
+      arv: $("arv"),
+      refiLtv: $("refiLtv"),
+      refiRate: $("refiRate"),
+      refiYears: $("refiYears"),
+      refiClosingPct: $("refiClosingPct"),
+
+      rent: $("rent"),
+      taxRate: $("taxRate"),
+      insMonthly: $("insMonthly"),
+      opexPct: $("opexPct"),
+
+      // outputs
+      cashInvested: $("cashInvested"),
+      cashLeftIn: $("cashLeftIn"),
+      postCashflow: $("postCashflow"),
+
+      tPurchaseLoan: $("tPurchaseLoan"),
+      tHoldingTotal: $("tHoldingTotal"),
+      tRefiLoan: $("tRefiLoan"),
+      tRefiClosing: $("tRefiClosing"),
+      tNetProceeds: $("tNetProceeds"),
+      tEquity: $("tEquity"),
+      tCoC: $("tCoC"),
+
+      quickRead: $("quickRead"),
+      badge: $("badge"),
+
+      recalcBtn: $("recalcBtn"),
+      resetBtn: $("resetBtn"),
+      year: $("year"),
+    };
+
+    const DEFAULTS = {
+      purchasePrice: 250000,
+      closingCostPct: 3,
+      downPaymentPct: 15,
+      purchaseRate: 10.5,
+      interestOnly: "interestOnly",
+      purchaseTermYears: 30,
+      rehabMonths: 5,
+
+      rehabBudget: 60000,
+      otherHoldMonthly: 300,
+      taxInsHoldMonthly: 350,
+
+      arv: 360000,
+      refiLtv: 75,
+      refiRate: 6.75,
+      refiYears: 30,
+      refiClosingPct: 2.0,
+
+      rent: 2600,
+      taxRate: 1.10,
+      insMonthly: 160,
+      opexPct: 35
+    };
+
+    function applyDefaults() {
+      for (const [k, v] of Object.entries(DEFAULTS)) {
+        if (els[k]) els[k].value = v;
+      }
+      recalc();
+    }
+
+    function setQuickRead(cashLeftIn, monthlyCashflow, equityCreated) {
+      // Simple rubric: directional, not universal.
+      let badgeText = "Neutral";
+      let badgeClass = "badge warn";
+      let msg = "Verify ARV, refi terms, and rent. Small changes can swing results a lot.";
+
+      const effectivelyInfiniteCoC = (cashLeftIn <= 0 && monthlyCashflow > 0);
+      if (effectivelyInfiniteCoC) {
+        badgeText = "Excellent";
+        badgeClass = "badge ok";
+        msg = "You’re projected to pull all cash out (or more) and still cash flow. Double-check ARV/refi feasibility.";
+      } else if (cashLeftIn > 0 && monthlyCashflow >= 200 && equityCreated >= 25000) {
+        badgeText = "Strong";
+        badgeClass = "badge ok";
+        msg = "Looks strong: meaningful equity created and positive stabilized cash flow. Confirm rehab scope + rent comps.";
+      } else if (monthlyCashflow < 0) {
+        badgeText = "Weak";
+        badgeClass = "badge bad";
+        msg = "Negative stabilized cash flow. Re-check rent, taxes/insurance, opex %, and refi rate/LTV.";
+      } else {
+        badgeText = "Borderline";
+        badgeClass = "badge warn";
+        msg = "Thin margins or limited equity. Consider buying lower, improving ARV/rent, or reducing rehab/holding costs.";
+      }
+
+      els.badge.className = badgeClass;
+      els.badge.textContent = badgeText;
+      els.quickRead.textContent = msg;
+    }
+
+    function recalc() {
+      const purchasePrice = num(els.purchasePrice.value);
+      const closingCostPct = clamp(num(els.closingCostPct.value), 0, 100) / 100;
+
+      const downPct = clamp(num(els.downPaymentPct.value), 0, 100) / 100;
+      const purchaseRate = Math.max(0, num(els.purchaseRate.value));
+      const rehabMonths = Math.max(0, Math.round(num(els.rehabMonths.value)));
+
+      const interestMode = els.interestOnly.value;
+      const purchaseTermYears = Math.max(1, Math.round(num(els.purchaseTermYears.value)));
+
+      const rehabBudget = Math.max(0, num(els.rehabBudget.value));
+      const otherHoldMonthly = Math.max(0, num(els.otherHoldMonthly.value));
+      const taxInsHoldMonthly = Math.max(0, num(els.taxInsHoldMonthly.value));
+
+      const arv = Math.max(0, num(els.arv.value));
+      const refiLtv = clamp(num(els.refiLtv.value), 0, 100) / 100;
+      const refiRate = Math.max(0, num(els.refiRate.value));
+      const refiYears = Math.max(1, Math.round(num(els.refiYears.value)));
+      const refiClosingPct = clamp(num(els.refiClosingPct.value), 0, 100) / 100;
+
+      const rent = Math.max(0, num(els.rent.value));
+      const taxRate = clamp(num(els.taxRate.value), 0, 100) / 100;
+      const insMonthly = Math.max(0, num(els.insMonthly.value));
+      const opexPct = clamp(num(els.opexPct.value), 0, 100) / 100;
+
+      // Purchase financing
+      const downPayment = purchasePrice * downPct;
+      const purchaseLoan = Math.max(0, purchasePrice - downPayment);
+
+      // Rehab-period loan payment estimate
+      let rehabLoanPaymentMonthly = 0;
+      if (interestMode === "interestOnly") {
+        rehabLoanPaymentMonthly = monthlyInterestOnly(purchaseLoan, purchaseRate);
+      } else {
+        rehabLoanPaymentMonthly = monthlyPI(purchaseLoan, purchaseRate, purchaseTermYears);
+      }
+
+      const holdingTotal = rehabMonths * (rehabLoanPaymentMonthly + taxInsHoldMonthly + otherHoldMonthly);
+
+      const purchaseClosing = purchasePrice * closingCostPct;
+
+      // Cash invested before refi (assumes rehab is paid out of pocket)
+      const cashInvested = downPayment + purchaseClosing + rehabBudget + holdingTotal;
+
+      // Total basis (purchase + rehab) - excludes holding as "basis" in the accounting sense
+      // but we show equity created vs total dollars spent on property itself.
+      const totalBasis = purchasePrice + rehabBudget;
+      const equityCreated = Math.max(0, arv - totalBasis);
+
+      // Refi
+      const newLoan = arv * refiLtv;
+      const refiClosing = newLoan * refiClosingPct;
+
+      // Payoff assumption: purchase loan balance ≈ original loan amount
+      // (High confidence for interest-only; approximation for amortizing.)
+      const payoff = purchaseLoan;
+
+      const netProceeds = newLoan - payoff - refiClosing;
+
+      // Cash left in deal: invested minus proceeds (if negative, you pulled cash out)
+      const cashLeftIn = cashInvested - netProceeds;
+
+      // Stabilized cash flow after refi
+      const refiPI = monthlyPI(newLoan, refiRate, refiYears);
+      const taxesMonthly = (arv * taxRate) / 12;
+      const opexMonthly = rent * opexPct;
+
+      const totalMonthlyCosts = refiPI + taxesMonthly + insMonthly + opexMonthly;
+      const postCashflow = rent - totalMonthlyCosts;
+
+      // Post-refi CoC uses cash left in (if <=0, we report 0 and rely on quick read)
+      const coc = cashLeftIn > 0 ? ((postCashflow * 12) / cashLeftIn) : 0;
+
+      // Render
+      els.cashInvested.textContent = money(cashInvested);
+      els.cashLeftIn.textContent = money(cashLeftIn);
+      els.postCashflow.textContent = money(postCashflow);
+
+      els.tPurchaseLoan.textContent = money(purchaseLoan);
+      els.tHoldingTotal.textContent = money(holdingTotal);
+      els.tRefiLoan.textContent = money(newLoan);
+      els.tRefiClosing.textContent = money(refiClosing);
+      els.tNetProceeds.innerHTML = "<strong>" + money(netProceeds) + "</strong>";
+      els.tEquity.textContent = money(equityCreated);
+      els.tCoC.textContent = pct(coc);
+
+      setQuickRead(cashLeftIn, postCashflow, equityCreated);
+    }
+
+    function hookEvents() {
+      document.querySelectorAll("input, select").forEach((el) => {
+        el.addEventListener("input", recalc);
+        el.addEventListener("change", recalc);
+      });
+
+      els.recalcBtn.addEventListener("click", recalc);
+      els.resetBtn.addEventListener("click", applyDefaults);
+    }
+
+    els.year.textContent = new Date().getFullYear();
+    hookEvents();
+    applyDefaults();
+  </script>
 </body>
 </html>

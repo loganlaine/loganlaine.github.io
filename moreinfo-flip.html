@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#f4f6fb" />
+
+  <title>More Info • Flip</title>
+
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="./favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="./favicon-16.png" sizes="16x16">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+</head>
+
+<body>
+  <div class="page">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <a class="brand" href="./index.html" aria-label="Home">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div>
+            <div class="brand-title">More Info</div>
+            <div class="brand-subtitle">Flip (Rehab & Sell)</div>
+          </div>
+        </a>
+
+        <nav class="nav" aria-label="Primary navigation">
+          <a href="./turnkey.html">Turnkey</a>
+          <a href="./brrrr.html">BRRRR</a>
+          <a class="active" href="./flip.html">Flip</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div class="kicker">Definitions • Assumptions • Risk controls</div>
+        <h1 class="h1">Flip: What the calculator means</h1>
+        <p class="lede">
+          This page explains the terms used in the Flip analyzer and how to interpret profit/ROI metrics.
+          Flips are extremely sensitive to rehab budget and timeline—so validate those first.
+        </p>
+      </section>
+
+      <section class="mt4 grid grid-2">
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Flip Strategy</h2>
+            <p class="p">
+              A flip is a short-term project where you buy, renovate, and sell for a profit.
+              The Flip analyzer focuses on:
+            </p>
+            <ul class="p" style="margin-top:0; padding-left:18px;">
+              <li>Purchase + purchase closing costs</li>
+              <li>Rehab budget</li>
+              <li>Holding costs during rehab + while listed</li>
+              <li>Sale price and selling costs</li>
+              <li>Net profit, ROI, annualized ROI, and break-even sale price</li>
+            </ul>
+            <div class="alert alert-muted">
+              What it does <strong>not</strong> model: income taxes, contractor draw schedules, detailed debt structures,
+              and project management overhead unless you include it in “utilities/other.”
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Key Outputs</h2>
+
+            <div class="table-wrap">
+              <table aria-label="Key outputs">
+                <thead>
+                  <tr>
+                    <th>Output</th>
+                    <th>Meaning</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="code">Profit (Net)</span></td>
+                    <td>Net sale proceeds − payoff − cash invested (down + closing + points + rehab + holding).</td>
+                  </tr>
+                  <tr>
+                    <td><span class="code">ROI</span></td>
+                    <td>Profit ÷ cash invested. Simple return on the cash you put at risk.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="code">Annualized ROI</span></td>
+                    <td>Compounded return adjusted for total holding months (rehab + market/closing).</td>
+                  </tr>
+                  <tr>
+                    <td><span class="code">Break-even Sale Price</span></td>
+                    <td>Approx sale price needed to cover costs given your selling cost percentages.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="alert alert-warn mt3">
+              ROI and annualized ROI can look great on paper if the timeline is underestimated. Add buffer months.
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="mt4">
+        <div class="card">
+          <div class="card-inner">
+            <h2 class="h2">Sale Price, Selling Costs, and Net Proceeds</h2>
+
+            <div class="grid grid-2">
+              <div>
+                <h3 class="h3">Sale Price / ARV</h3>
+                <p class="p">
+                  In the flip analyzer, “Sale Price / ARV” is the price you expect to sell for.
+                  Use conservative comps and account for market shifts.
+                </p>
+                <div class="alert alert-muted">
+                  A small error in sale price can wipe out profit, especially when holding costs are high.
+                </div>
+              </div>
+
+              <div>
+                <h3 class="h3">Selling Costs</h3>
+                <p class="p">
+                  Selling costs include agent commission, seller closing costs, and any concessions/credits.
+                  These costs come out of the sale price to produce <em>net sale proceeds</em>.
+                </p>
+                <div class="alert alert-muted">
+                  If your market typically expects credits, build them in—don’t “hope” them away.
+                </div>
+              </div>
+            </div>
+
+            <hr class="hr" />
+
+            <h3 class="h3">Net sale proceeds (conceptually)</h3>
+            <div class="alert alert-muted">
+              Net sale proceeds ≈ Sale price − (agent commission + seller closing costs + concessions)
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mt4 grid grid-2">
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Holding Costs</h2>
+            <p class="p">
+              Holding costs are usually the biggest “silent killer” in flips. The calculator estimates them using:
+            </p>
+
+            <div class="table-wrap">
+              <table aria-label="Holding costs">
+                <thead>
+                  <tr>
+                    <th>Component</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Loan payment</td>
+                    <td>Interest-only or amortizing payment on the purchase loan (approx).</td>
+                  </tr>
+                  <tr>
+                    <td>Taxes &amp; insurance</td>
+                    <td>Monthly estimate during the project.</td>
+                  </tr>
+                  <tr>
+                    <td>Utilities / other</td>
+                    <td>Utilities, lawn/snow, dumpsters, staging storage, etc.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Total holding</strong></td>
+                    <td><strong>(Rehab months + sale months) × monthly holding components</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="alert alert-warn mt3">
+              If your timeline is uncertain, increase “sale months” by a buffer. The “perfect timeline” rarely happens.
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <h2 class="h2">Points &amp; Financing Notes</h2>
+            <p class="p">
+              “Points” are modeled as a percent of the purchase loan and treated as a cost at purchase.
+              Hard money terms vary (points, fees, draw schedules, minimum interest).
+            </p>
+            <div class="alert alert-muted">
+              The analyzer uses a simplified payoff assumption (payoff ≈ original loan amount). For most flips this is
+              close enough directionally, but it isn’t exact if you use amortizing loans or pay principal down.
+            </div>
+
+        </article>
+      </section>
+
+      <section class="mt4">
+        <div class="card">
+          <div class="card-inner">
+            <h2 class="h2">Common Flip Pitfalls</h2>
+
+            <div class="grid grid-2">
+              <div>
+                <h3 class="h3">Underestimating rehab</h3>
+                <p class="p">
+                  Missing major systems (roof, sewer, foundation, electrical) or underestimating labor/materials
+                  is the most common profit destroyer. Keep a contingency in mind.
+                </p>
+              </div>
+
+              <div>
+                <h3 class="h3">Timeline slip</h3>
+                <p class="p">
+                  Permits, inspections, contractor scheduling, and supply delays add time—and time adds cost.
+                  Your biggest lever is finishing on schedule.
+                </p>
+              </div>
+
+              <div>
+                <h3 class="h3">ARV optimism</h3>
+                <p class="p">
+                  Overestimating resale value turns a marginal deal into a “great” deal on paper.
+                  Use conservative comps and adjust for condition and buyer preferences.
+                </p>
+              </div>
+
+              <div>
+                <h3 class="h3">Selling friction</h3>
+                <p class="p">
+                  Price reductions, credits, and buyer inspection demands happen. Don’t ignore them—model them.
+                </p>
+              </div>
+            </div>
+
+            <div class="alert alert-muted mt3">
+              If the deal only works with perfect assumptions, it probably doesn’t work.
+            </div>
+
+            <div class="card-actions mt3">
+              <a class="btn btn-primary" href="./flip.html">Back to Flip</a>
+              <a class="btn btn-secondary" href="./index.html">Home</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div>© <span id="year"></span> Deal Analyzers</div>
+        <div class="muted">More Info • Flip</div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
