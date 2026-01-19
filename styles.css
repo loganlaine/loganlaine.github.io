@@ -112,7 +112,7 @@ main {
 
   background: #ffffff;
   border: 1px solid var(--border);
-  border-radius: 0 0 18px 18px;     /* rounded bottom only */
+  border-radius: 18px;
 
   box-shadow:
     0 10px 22px rgba(2, 6, 23, 0.10),
@@ -505,7 +505,6 @@ textarea:focus {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 360px;
   background: #ffffff;              /* <-- this is the big one */
 }
 
