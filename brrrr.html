@@ -74,10 +74,6 @@
                 <legend class="legend">Purchase Financing (Bridge / Hard Money / Conventional)</legend>
 
                 <div class="form-grid">
-                  <div class="col-6">
-                    <label class="label" for="downPaymentPct">Down Payment (%)</label>
-                    <input class="input" id="downPaymentPct" type="number" min="0" max="100" step="0.5" inputmode="decimal" value="15" />
-                  </div>
 
                   <div class="col-6">
                     <label class="label" for="purchaseRate">Interest Rate (%)</label>
@@ -219,7 +215,7 @@
               <div class="stat">
                 <div class="stat-label">Cash Invested (pre-refi)</div>
                 <div class="stat-value" id="cashInvested">$0</div>
-                <div class="help">Down + purchase closing + rehab + holding costs.</div>
+                <div class="help">Purchase closing + holding costs. (Purchase + rehab are financed.)</div>
               </div>
 
               <div class="stat">
@@ -247,7 +243,7 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Purchase Loan Amount</td>
+                    <td>Total Loan Amount (Purchase + Rehab)</td>
                     <td class="right" id="tPurchaseLoan">$0</td>
                   </tr>
                   <tr>
@@ -348,7 +344,6 @@
     const els = {
       purchasePrice: $("purchasePrice"),
       closingCostPct: $("closingCostPct"),
-      downPaymentPct: $("downPaymentPct"),
       purchaseRate: $("purchaseRate"),
       interestOnly: $("interestOnly"),
       purchaseTermYears: $("purchaseTermYears"),
@@ -393,7 +388,6 @@
     const DEFAULTS = {
       purchasePrice: 250000,
       closingCostPct: 3,
-      downPaymentPct: 15,
       purchaseRate: 10.5,
       interestOnly: "interestOnly",
       purchaseTermYears: 30,
@@ -456,7 +450,6 @@
       const purchasePrice = num(els.purchasePrice.value);
       const closingCostPct = clamp(num(els.closingCostPct.value), 0, 100) / 100;
 
-      const downPct = clamp(num(els.downPaymentPct.value), 0, 100) / 100;
       const purchaseRate = Math.max(0, num(els.purchaseRate.value));
       const rehabMonths = Math.max(0, Math.round(num(els.rehabMonths.value)));
 
@@ -479,8 +472,7 @@
       const opexPct = clamp(num(els.opexPct.value), 0, 100) / 100;
 
       // Purchase financing
-      const downPayment = purchasePrice * downPct;
-      const purchaseLoan = Math.max(0, purchasePrice - downPayment);
+      const purchaseLoan = Math.max(0, purchasePrice + rehabBudget);
 
       // Rehab-period loan payment estimate
       let rehabLoanPaymentMonthly = 0;
@@ -494,8 +486,8 @@
 
       const purchaseClosing = purchasePrice * closingCostPct;
 
-      // Cash invested before refi (assumes rehab is paid out of pocket)
-      const cashInvested = downPayment + purchaseClosing + rehabBudget + holdingTotal;
+      // Cash invested before refi (purchase + rehab financed in the loan)
+      const cashInvested = purchaseClosing + holdingTotal;
 
       // Total basis (purchase + rehab) - excludes holding as "basis" in the accounting sense
       // but we show equity created vs total dollars spent on property itself.
@@ -506,9 +498,9 @@
       const newLoan = arv * refiLtv;
       const refiClosing = newLoan * refiClosingPct;
 
-      // Payoff assumption: purchase loan balance ≈ original loan amount
-      // (High confidence for interest-only; approximation for amortizing.)
+      // Payoff at refi: 100% financed (purchase + rehab), so payoff = original loan amount
       const payoff = purchaseLoan;
+
 
       const netProceeds = newLoan - payoff - refiClosing;
 
@@ -525,6 +517,7 @@
 
       // Post-refi CoC uses cash left in (if <=0, we report 0 and rely on quick read)
       const coc = cashLeftIn > 0 ? ((postCashflow * 12) / cashLeftIn) : 0;
+      const effectivelyInfiniteCoC = (cashLeftIn <= 0 && postCashflow > 0);
 
       // Render
       els.cashInvested.textContent = money(cashInvested);
@@ -537,7 +530,7 @@
       els.tRefiClosing.textContent = money(refiClosing);
       els.tNetProceeds.innerHTML = "<strong>" + money(netProceeds) + "</strong>";
       els.tEquity.textContent = money(equityCreated);
-      els.tCoC.textContent = pct(coc);
+      els.tCoC.textContent = effectivelyInfiniteCoC ? "Infinite" : pct(coc);
 
       setQuickRead(cashLeftIn, postCashflow, equityCreated);
     }
